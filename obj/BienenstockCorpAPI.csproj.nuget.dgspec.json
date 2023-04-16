@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Maxi\\Documents\\Projects\\bienenstock-corp-api\\BienenstockCorpAPI\\BienenstockCorpAPI.csproj": {}
+    "C:\\Users\\Maxi\\Documents\\Projects\\bienenstock-corp-api\\BienenstockCorpAPI.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Maxi\\Documents\\Projects\\bienenstock-corp-api\\BienenstockCorpAPI\\BienenstockCorpAPI.csproj": {
+    "C:\\Users\\Maxi\\Documents\\Projects\\bienenstock-corp-api\\BienenstockCorpAPI.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Maxi\\Documents\\Projects\\bienenstock-corp-api\\BienenstockCorpAPI\\BienenstockCorpAPI.csproj",
+        "projectUniqueName": "C:\\Users\\Maxi\\Documents\\Projects\\bienenstock-corp-api\\BienenstockCorpAPI.csproj",
         "projectName": "BienenstockCorpAPI",
-        "projectPath": "C:\\Users\\Maxi\\Documents\\Projects\\bienenstock-corp-api\\BienenstockCorpAPI\\BienenstockCorpAPI.csproj",
+        "projectPath": "C:\\Users\\Maxi\\Documents\\Projects\\bienenstock-corp-api\\BienenstockCorpAPI.csproj",
         "packagesPath": "C:\\Users\\Maxi\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Maxi\\Documents\\Projects\\bienenstock-corp-api\\BienenstockCorpAPI\\obj\\",
+        "outputPath": "C:\\Users\\Maxi\\Documents\\Projects\\bienenstock-corp-api\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Maxi\\AppData\\Roaming\\NuGet\\NuGet.Config",

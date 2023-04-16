@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "QLiDUcFtJCtgYmsQi1GeOGl4f1+Cwx4ndvPKiwZa8/X2CzfyOpUJgBhaUWqb0t60vytQEOr8Ba0KkqPM3cTUdw==",
+  "dgSpecHash": "DAsAKvVZm3cSsFg+6+degD6zKhFBbC+MzQY0a8YeRNwZEPWJSkqk4gV9YjdZBnLSxr0aYfeXqg4ZpmKgOZCLlA==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Maxi\\Documents\\Projects\\bienenstock-corp-api\\BienenstockCorpAPI\\BienenstockCorpAPI.csproj",
+  "projectFilePath": "C:\\Users\\Maxi\\Documents\\Projects\\bienenstock-corp-api\\BienenstockCorpAPI.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Maxi\\.nuget\\packages\\microsoft.extensions.apidescription.server\\3.0.0\\microsoft.extensions.apidescription.server.3.0.0.nupkg.sha512",
     "C:\\Users\\Maxi\\.nuget\\packages\\microsoft.openapi\\1.2.3\\microsoft.openapi.1.2.3.nupkg.sha512",
