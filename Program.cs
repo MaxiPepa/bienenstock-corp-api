@@ -1,4 +1,5 @@
 using BienenstockCorpAPI.Data;
+using BienenstockCorpAPI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +9,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddSqlServer<BienenstockCorpContext>(builder.Configuration.GetConnectionString("BienenstockCorpConnection"));
+builder.Services.AddScoped<UserService, UserService>();
+builder.Services.AddScoped<ProductService, ProductService>();
 
 var app = builder.Build();
 
