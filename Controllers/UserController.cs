@@ -1,5 +1,4 @@
-﻿using BienenstockCorpAPI.Data;
-using BienenstockCorpAPI.Data.Entities;
+﻿using BienenstockCorpAPI.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BienenstockCorpAPI.Controllers
@@ -8,17 +7,17 @@ namespace BienenstockCorpAPI.Controllers
     [Route("[controller]")]
     public class UserController : ControllerBase
     {
-        private readonly BienenstockCorpContext _context;
+        private readonly UserService _userService;
 
-        public UserController(BienenstockCorpContext context)
+        public UserController(UserService userService)
         {
-            _context = context;
+            _userService = userService;
         }
 
         [HttpGet]
-        public IEnumerable<User> GetUsers()
+        public IActionResult GetUsers()
         {
-            return _context.User.ToList();
+            return Ok(_userService.GetUsers());
         }
     }
 }
