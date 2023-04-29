@@ -3,12 +3,11 @@ using BienenstockCorpAPI.Data;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-var mySQLConfig = new MySQLConfiguration(builder.Configuration.GetConnectionString("MySQLConnection"));
-
-builder.Services.AddSingleton(mySQLConfig);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddSqlServer<BienenstockCorpContext>(builder.Configuration.GetConnectionString("BienenstockCorpConnection"));
 
 var app = builder.Build();
 
