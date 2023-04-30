@@ -13,6 +13,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddSqlServer<BienenstockCorpContext>(builder.Configuration.GetConnectionString("BienenstockCorpConnection"));
 builder.Services.AddScoped<UserService, UserService>();
 builder.Services.AddScoped<ProductService, ProductService>();
+builder.Services.AddScoped<NoteService, NoteService>();
 
 builder.Services.AddCors(options =>
 {
