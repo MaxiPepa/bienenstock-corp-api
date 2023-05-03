@@ -24,10 +24,12 @@ public partial class BienenstockCorpContext : DbContext
 
     public virtual DbSet<Product> Product { get; set; }
 
-    public virtual DbSet<ProductBuyer> ProductBuyer { get; set; }
+    public virtual DbSet<ProductPurchase> ProductPurchase { get; set; }
 
     public virtual DbSet<ProductSale> ProductSale { get; set; }
-
+    
+    public virtual DbSet<Purchase> Purchase { get; set; }
+    
     public virtual DbSet<Sale> Sale { get; set; }
 
     public virtual DbSet<User> User { get; set; }
@@ -36,11 +38,10 @@ public partial class BienenstockCorpContext : DbContext
     {
         modelBuilder.Entity<Dispatch>(entity =>
         {
-            entity.HasKey(e => new { e.DispatchId, e.ProductId }).HasName("Dispatch_PK");
+            entity.HasKey(e => e.DispatchId).HasName("Dispatch_PK");
 
             entity.ToTable("Dispatch");
 
-            entity.Property(e => e.DispatchId).ValueGeneratedOnAdd();
             entity.Property(e => e.DispatchDate).HasColumnType("datetime");
 
             entity.HasOne(d => d.Product).WithMany(p => p.Dispatches)
@@ -55,11 +56,14 @@ public partial class BienenstockCorpContext : DbContext
 
             entity.ToTable("Inform");
 
-            entity.Property(e => e.Description).IsUnicode(false);
+            entity.Property(e => e.Description)
+                .IsUnicode(false)
+                .UseCollation("SQL_Latin1_General_CP1_CI_AS");
             entity.Property(e => e.IssueDate).HasColumnType("datetime");
             entity.Property(e => e.Title)
                 .HasMaxLength(50)
-                .IsUnicode(false);
+                .IsUnicode(false)
+                .UseCollation("SQL_Latin1_General_CP1_CI_AS");
 
             entity.HasOne(d => d.User).WithMany(p => p.Informs)
                 .HasForeignKey(d => d.UserId)
@@ -76,7 +80,8 @@ public partial class BienenstockCorpContext : DbContext
             entity.Property(e => e.Date).HasColumnType("datetime");
             entity.Property(e => e.Description)
                 .HasMaxLength(500)
-                .IsUnicode(false);
+                .IsUnicode(false)
+                .UseCollation("SQL_Latin1_General_CP1_CI_AS");
 
             entity.HasOne(d => d.User).WithMany(p => p.Notes)
                 .HasForeignKey(d => d.UserId)
@@ -89,33 +94,36 @@ public partial class BienenstockCorpContext : DbContext
 
             entity.ToTable("Product");
 
-            entity.Property(e => e.Description).IsUnicode(false);
             entity.Property(e => e.EnterDate).HasColumnType("datetime");
             entity.Property(e => e.ExpirationDate).HasColumnType("datetime");
-            entity.Property(e => e.Image).IsUnicode(false);
             entity.Property(e => e.Name)
                 .HasMaxLength(50)
-                .IsUnicode(false);
+                .IsUnicode(false)
+                .UseCollation("SQL_Latin1_General_CP1_CI_AS");
             entity.Property(e => e.Price).HasColumnType("decimal(10, 2)");
+            entity.Property(e => e.ProductCode)
+                .HasMaxLength(10)
+                .IsUnicode(false)
+                .UseCollation("SQL_Latin1_General_CP1_CI_AS");
         });
 
-        modelBuilder.Entity<ProductBuyer>(entity =>
+        modelBuilder.Entity<ProductPurchase>(entity =>
         {
-            entity.HasKey(e => new { e.ProductId, e.UserId }).HasName("ProductBuyer_PK");
+            entity.HasKey(e => new { e.ProductId, e.PurchaseId }).HasName("ProductPurchase_PK");
 
-            entity.ToTable("ProductBuyer");
+            entity.ToTable("ProductPurchase");
 
             entity.Property(e => e.UnitPrice).HasColumnType("decimal(10, 2)");
 
-            entity.HasOne(d => d.Product).WithMany(p => p.ProductBuyers)
+            entity.HasOne(d => d.Product).WithMany(p => p.ProductPurchases)
                 .HasForeignKey(d => d.ProductId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("ProductBuyer_Product_FK");
+                .HasConstraintName("ProductPurchase_Product_FK");
 
-            entity.HasOne(d => d.User).WithMany(p => p.ProductBuyers)
-                .HasForeignKey(d => d.UserId)
+            entity.HasOne(d => d.Purchase).WithMany(p => p.ProductPurchases)
+                .HasForeignKey(d => d.PurchaseId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("ProductBuyer_User_FK");
+                .HasConstraintName("ProductPurchase_Purchase_FK");
         });
 
         modelBuilder.Entity<ProductSale>(entity =>
@@ -137,6 +145,21 @@ public partial class BienenstockCorpContext : DbContext
                 .HasConstraintName("ProductSale_Sale_FK");
         });
 
+        modelBuilder.Entity<Purchase>(entity =>
+        {
+            entity.HasKey(e => e.PurchaseId).HasName("Purchase_PK");
+
+            entity.ToTable("Purchase");
+
+            entity.Property(e => e.Date).HasColumnType("datetime");
+            entity.Property(e => e.TotalPrice).HasColumnType("decimal(10, 2)");
+
+            entity.HasOne(d => d.User).WithMany(p => p.Purchases)
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("Purchase_User_FK");
+        });
+
         modelBuilder.Entity<Sale>(entity =>
         {
             entity.HasKey(e => e.SaleId).HasName("Sale_PK");
@@ -145,6 +168,11 @@ public partial class BienenstockCorpContext : DbContext
 
             entity.Property(e => e.Date).HasColumnType("datetime");
             entity.Property(e => e.TotalPrice).HasColumnType("decimal(10, 2)");
+
+            entity.HasOne(d => d.User).WithMany(p => p.Sales)
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("Sale_User_FK");
         });
 
         modelBuilder.Entity<User>(entity =>
@@ -153,19 +181,26 @@ public partial class BienenstockCorpContext : DbContext
 
             entity.ToTable("User");
 
+            entity.Property(e => e.Avatar).IsUnicode(false);
             entity.Property(e => e.Email)
                 .HasMaxLength(50)
-                .IsUnicode(false);
+                .IsUnicode(false)
+                .UseCollation("SQL_Latin1_General_CP1_CI_AS");
             entity.Property(e => e.LastName)
                 .HasMaxLength(50)
-                .IsUnicode(false);
+                .IsUnicode(false)
+                .UseCollation("SQL_Latin1_General_CP1_CI_AS");
             entity.Property(e => e.Name)
                 .HasMaxLength(50)
-                .IsUnicode(false);
-            entity.Property(e => e.PassHash).IsUnicode(false);
+                .IsUnicode(false)
+                .UseCollation("SQL_Latin1_General_CP1_CI_AS");
+            entity.Property(e => e.PassHash)
+                .IsUnicode(false)
+                .UseCollation("SQL_Latin1_General_CP1_CI_AS");
             entity.Property(e => e.UserType)
                 .HasMaxLength(20)
-                .IsUnicode(false);
+                .IsUnicode(false)
+                .UseCollation("SQL_Latin1_General_CP1_CI_AS");
         });
 
         OnModelCreatingPartial(modelBuilder);
