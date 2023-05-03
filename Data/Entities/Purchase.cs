@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 namespace BienenstockCorpAPI.Data.Entities;
 
-public partial class Sale
+public partial class Purchase
 {
-    public int SaleId { get; set; }
+    public int PurchaseId { get; set; }
 
     public DateTime Date { get; set; }
 
@@ -13,7 +13,7 @@ public partial class Sale
 
     public int UserId { get; set; }
 
-    public virtual ICollection<ProductSale> ProductSales { get; set; } = new List<ProductSale>();
+    public virtual ICollection<ProductPurchase> ProductPurchases { get; set; } = new List<ProductPurchase>();
 
     public virtual User User { get; set; } = null!;
 }

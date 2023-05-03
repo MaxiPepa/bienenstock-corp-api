@@ -5,7 +5,7 @@
         public static string ADMIN = "Admin";
         public static string BUYER = "Buyer";
         public static string SELLER = "Seller";
-        public static string DEPOSIT = "Deposit";
+        public static string DEPOSITOR = "Depositor";
         public static string ANALYST = "Analyst";
     }
 }

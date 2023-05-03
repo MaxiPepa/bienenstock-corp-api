@@ -17,9 +17,15 @@ public partial class User
 
     public string UserType { get; set; } = null!;
 
+    public string? Avatar { get; set; }
+
+    public bool Inactive { get; set; }
+
     public virtual ICollection<Inform> Informs { get; set; } = new List<Inform>();
 
     public virtual ICollection<Note> Notes { get; set; } = new List<Note>();
 
-    public virtual ICollection<ProductBuyer> ProductBuyers { get; set; } = new List<ProductBuyer>();
+    public virtual ICollection<Purchase> Purchases { get; set; } = new List<Purchase>();
+
+    public virtual ICollection<Sale> Sales { get; set; } = new List<Sale>();
 }

@@ -4,6 +4,7 @@ using BienenstockCorpAPI.Models.UserModels;
 using BienenstockCorpAPI.Helpers;
 using BienenstockCorpAPI.Helpers.Consts;
 using Microsoft.EntityFrameworkCore;
+using System.Text.RegularExpressions;
 
 namespace BienenstockCorpAPI.Services
 {
@@ -88,6 +89,8 @@ namespace BienenstockCorpAPI.Services
         private static string ValidateSaveUser(SaveUserRequest rq)
         {
             var error = String.Empty;
+            var emailRegx = new Regex(@"\S+@\S+\.\S+");
+            var passwordRegx = new Regex(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\w\s]).{6,}$");
 
             if (rq == null)
             {
@@ -97,11 +100,11 @@ namespace BienenstockCorpAPI.Services
             {
                 error = "Invalid name or last name";
             }
-            else if (string.IsNullOrEmpty(rq.Email))
+            else if (string.IsNullOrEmpty(rq.Email) || !emailRegx.IsMatch(rq.Email))
             {
                 error = "Provide a valid Email";
             }
-            else if (string.IsNullOrEmpty(rq.Password))
+            else if (string.IsNullOrEmpty(rq.Password) || !passwordRegx.IsMatch(rq.Password))
             {
                 error = "Provide a valid password (Longer than 6 characters, one uppercase, one lowercase, one special character and one number)";
             }
@@ -109,7 +112,7 @@ namespace BienenstockCorpAPI.Services
                 rq.UserType != UserType.ADMIN &&
                 rq.UserType != UserType.BUYER &&
                 rq.UserType != UserType.SELLER &&
-                rq.UserType != UserType.DEPOSIT &&
+                rq.UserType != UserType.DEPOSITOR &&
                 rq.UserType != UserType.ANALYST) 
             {
                 error = "Invalid user type";
