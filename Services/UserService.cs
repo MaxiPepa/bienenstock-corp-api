@@ -48,7 +48,7 @@ namespace BienenstockCorpAPI.Services
                 return new SaveUserResponse
                 {
                     Message = validation,
-                    Error = true,
+                    Success = false,
                 };  
             }
 
@@ -71,7 +71,7 @@ namespace BienenstockCorpAPI.Services
                     FullName = user.Name + " " + user.LastName,
                     Email = user.Email,
                     Message = "User successfully created",
-                    Error = false,
+                    Success = true,
                 };
             }
             catch (Exception ex)
@@ -79,7 +79,7 @@ namespace BienenstockCorpAPI.Services
                 return new SaveUserResponse
                 {
                     Message = ex.Message,
-                    Error = true,
+                    Success = false,
                 };
             }
         }

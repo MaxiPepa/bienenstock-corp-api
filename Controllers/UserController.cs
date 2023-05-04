@@ -1,11 +1,13 @@
 ﻿using BienenstockCorpAPI.Models.UserModels;
 using BienenstockCorpAPI.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BienenstockCorpAPI.Controllers
 {
     [ApiController]
     [Route("[controller]")]
+    [Authorize]
     public class UserController : ControllerBase
     {
         #region Constructor
@@ -29,7 +31,7 @@ namespace BienenstockCorpAPI.Controllers
         {
             var rsp = await _userService.SaveUser(rq);
                 
-            if (!rsp.Error)
+            if (rsp.Success)
                 return Ok(rsp);
             else
                 return BadRequest(rsp);
