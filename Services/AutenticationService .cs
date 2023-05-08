@@ -79,6 +79,7 @@ namespace BienenstockCorpAPI.Services
                 Avatar = user.Avatar,
                 Email = user.Email,
                 Fullname = user.Name + " " + user.LastName,
+                Expiration = token.ValidTo,
             };
         }
         #endregion
