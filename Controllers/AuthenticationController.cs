@@ -7,14 +7,14 @@ namespace BienenstockCorpAPI.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class AutenticationController : ControllerBase 
+    public class AuthenticationController : ControllerBase 
     {
         #region Constructor
-        private readonly AutenticationService _autenticationService;
+        private readonly AuthenticationService _authenticationService;
 
-        public AutenticationController(AutenticationService autenticationService)
+        public AuthenticationController(AuthenticationService authenticationService)
         {
-            _autenticationService = autenticationService;
+            _authenticationService = authenticationService;
         }
         #endregion
 
@@ -22,7 +22,7 @@ namespace BienenstockCorpAPI.Controllers
         [HttpPost("Login")]
         public async Task<IActionResult> Login([FromBody] LoginRequest rq)
         {
-            var rsp = await _autenticationService.Login(rq);
+            var rsp = await _authenticationService.Login(rq);
 
             if (rsp.Success)
                 return Ok(rsp);
@@ -35,7 +35,7 @@ namespace BienenstockCorpAPI.Controllers
         {
             var identity = HttpContext.User.Identity as ClaimsIdentity;
 
-            var rsp = await _autenticationService.GetLoggedUser(identity);
+            var rsp = await _authenticationService.GetLoggedUser(identity);
 
             if (rsp.Success)
                 return Ok(rsp);

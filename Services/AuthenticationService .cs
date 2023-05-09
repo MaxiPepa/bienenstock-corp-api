@@ -6,17 +6,16 @@ using System.Security.Claims;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using BienenstockCorpAPI.Data.Entities;
 
 namespace BienenstockCorpAPI.Services
 {
-    public class AutenticationService
+    public class AuthenticationService
     {
         #region Constructor
         private readonly BienenstockCorpContext _context;
         private readonly IConfiguration _configuration;
 
-        public AutenticationService(BienenstockCorpContext context, IConfiguration configuration)
+        public AuthenticationService(BienenstockCorpContext context, IConfiguration configuration)
         {
             _context = context;
             _configuration = configuration;
@@ -79,7 +78,7 @@ namespace BienenstockCorpAPI.Services
                 Token = new JwtSecurityTokenHandler().WriteToken(token),
                 Avatar = user.Avatar,
                 Email = user.Email,
-                Fullname = user.Name + " " + user.LastName,
+                FullName = user.Name + " " + user.LastName,
                 Expiration = token.ValidTo,
             };
         }
@@ -116,7 +115,7 @@ namespace BienenstockCorpAPI.Services
                 Message = "Succesfully retrieved user",
                 Avatar = user.Avatar,
                 Email = user.Email,
-                Fullname = user.Name + " " + user.LastName,
+                FullName = user.Name + " " + user.LastName,
                 UserType = user.UserType,
             };
         }
