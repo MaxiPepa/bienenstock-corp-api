@@ -4,6 +4,7 @@ namespace BienenstockCorpAPI.Helpers
 {
     public class VerifyResponse
     {
+        public int? UserId { get; set; }
         public bool Success { get; set; }
         public string Message { get; set; }
     }
@@ -26,6 +27,7 @@ namespace BienenstockCorpAPI.Helpers
 
                 return new VerifyResponse
                 {
+                    UserId = Int32.Parse(identity.Claims.FirstOrDefault(x => x.Type == "UserId").Value),
                     Success = true,
                     Message = "Token verified correctly"
                 };

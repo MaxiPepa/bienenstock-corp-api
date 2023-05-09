@@ -6,6 +6,7 @@ using System.Security.Claims;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using BienenstockCorpAPI.Data.Entities;
 
 namespace BienenstockCorpAPI.Services
 {
@@ -80,6 +81,43 @@ namespace BienenstockCorpAPI.Services
                 Email = user.Email,
                 Fullname = user.Name + " " + user.LastName,
                 Expiration = token.ValidTo,
+            };
+        }
+
+        public async Task<GetLoggedUserResponse> GetLoggedUser(ClaimsIdentity? identity)
+        {
+            var tokenVerifierResponse = TokenVerifierHelper.TokenVerifier(identity);
+
+            if (!tokenVerifierResponse.Success)
+            {
+                return new GetLoggedUserResponse
+                {
+                    Success = false,
+                    Message = "Invalid token",
+                };
+            }
+
+            var user = await _context.User
+                .Where(x => x.UserId == tokenVerifierResponse.UserId)
+                .FirstOrDefaultAsync();
+
+            if (user == null)
+            {
+                return new GetLoggedUserResponse
+                {
+                    Success = false,
+                    Message = "User not found",
+                };
+            }
+
+            return new GetLoggedUserResponse
+            {
+                Success = true,
+                Message = "Succesfully retrieved user",
+                Avatar = user.Avatar,
+                Email = user.Email,
+                Fullname = user.Name + " " + user.LastName,
+                UserType = user.UserType,
             };
         }
         #endregion
