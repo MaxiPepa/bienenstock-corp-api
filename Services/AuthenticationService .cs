@@ -41,7 +41,7 @@ namespace BienenstockCorpAPI.Services
                 return new LoginResponse 
                 {
                     Success = false,
-                    Message = "Incorrect credentials",
+                    Message = "Incorrect email or password",
                 };
             };
 
