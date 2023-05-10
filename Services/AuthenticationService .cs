@@ -9,13 +9,13 @@ using System.Text;
 
 namespace BienenstockCorpAPI.Services
 {
-    public class AutenticationService
+    public class AuthenticationService
     {
         #region Constructor
         private readonly BienenstockCorpContext _context;
         private readonly IConfiguration _configuration;
 
-        public AutenticationService(BienenstockCorpContext context, IConfiguration configuration)
+        public AuthenticationService(BienenstockCorpContext context, IConfiguration configuration)
         {
             _context = context;
             _configuration = configuration;
@@ -41,7 +41,7 @@ namespace BienenstockCorpAPI.Services
                 return new LoginResponse 
                 {
                     Success = false,
-                    Message = "Incorrect credentials",
+                    Message = "Incorrect email or password",
                 };
             };
 
@@ -78,8 +78,46 @@ namespace BienenstockCorpAPI.Services
                 Token = new JwtSecurityTokenHandler().WriteToken(token),
                 Avatar = user.Avatar,
                 Email = user.Email,
-                Fullname = user.Name + " " + user.LastName,
+                FullName = user.Name + " " + user.LastName,
+                UserType = user.UserType,
                 Expiration = token.ValidTo,
+            };
+        }
+
+        public async Task<GetLoggedUserResponse> GetLoggedUser(GetLoggedUserRequest rq)
+        {
+            var tokenVerifierResponse = TokenVerifierHelper.TokenVerifier(rq.Identity);
+
+            if (!tokenVerifierResponse.Success)
+            {
+                return new GetLoggedUserResponse
+                {
+                    Success = false,
+                    Message = tokenVerifierResponse.Message,
+                };
+            }
+
+            var user = await _context.User
+                .Where(x => x.UserId == tokenVerifierResponse.UserId)
+                .FirstOrDefaultAsync();
+
+            if (user == null)
+            {
+                return new GetLoggedUserResponse
+                {
+                    Success = false,
+                    Message = "User not found",
+                };
+            }
+
+            return new GetLoggedUserResponse
+            {
+                Success = true,
+                Message = "Succesfully retrieved user",
+                Avatar = user.Avatar,
+                Email = user.Email,
+                FullName = user.Name + " " + user.LastName,
+                UserType = user.UserType,
             };
         }
         #endregion

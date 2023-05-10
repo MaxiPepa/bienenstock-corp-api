@@ -16,7 +16,7 @@ builder.Services.AddSwaggerGen();
 
 #region Dependency Injections
 builder.Services.AddSqlServer<BienenstockCorpContext>(builder.Configuration.GetConnectionString("BienenstockCorpConnection"));
-builder.Services.AddScoped<AutenticationService, AutenticationService>();
+builder.Services.AddScoped<AuthenticationService, AuthenticationService>();
 builder.Services.AddScoped<UserService, UserService>();
 builder.Services.AddScoped<ProductService, ProductService>();
 builder.Services.AddScoped<NoteService, NoteService>();
