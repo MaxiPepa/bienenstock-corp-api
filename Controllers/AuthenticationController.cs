@@ -27,7 +27,7 @@ namespace BienenstockCorpAPI.Controllers
             if (rsp.Success)
                 return Ok(rsp);
             else
-                return BadRequest(rsp);
+                return Unauthorized(rsp);
         }
 
         [HttpPost("GetLoggedUser")]
@@ -35,12 +35,18 @@ namespace BienenstockCorpAPI.Controllers
         {
             var identity = HttpContext.User.Identity as ClaimsIdentity;
 
-            var rsp = await _authenticationService.GetLoggedUser(identity);
+            if (identity == null)
+                return Unauthorized();
+
+            var rsp = await _authenticationService.GetLoggedUser(new GetLoggedUserRequest 
+            { 
+                Identity = identity 
+            });
 
             if (rsp.Success)
                 return Ok(rsp);
             else
-                return BadRequest(rsp);
+                return Unauthorized(rsp);
         }
         #endregion
     }

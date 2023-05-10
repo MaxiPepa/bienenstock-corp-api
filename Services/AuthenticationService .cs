@@ -79,20 +79,21 @@ namespace BienenstockCorpAPI.Services
                 Avatar = user.Avatar,
                 Email = user.Email,
                 FullName = user.Name + " " + user.LastName,
+                UserType = user.UserType,
                 Expiration = token.ValidTo,
             };
         }
 
-        public async Task<GetLoggedUserResponse> GetLoggedUser(ClaimsIdentity? identity)
+        public async Task<GetLoggedUserResponse> GetLoggedUser(GetLoggedUserRequest rq)
         {
-            var tokenVerifierResponse = TokenVerifierHelper.TokenVerifier(identity);
+            var tokenVerifierResponse = TokenVerifierHelper.TokenVerifier(rq.Identity);
 
             if (!tokenVerifierResponse.Success)
             {
                 return new GetLoggedUserResponse
                 {
                     Success = false,
-                    Message = "Invalid token",
+                    Message = tokenVerifierResponse.Message,
                 };
             }
 

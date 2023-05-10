@@ -1,5 +1,12 @@
-﻿namespace BienenstockCorpAPI.Models.AutenticationModels
+﻿using System.Security.Claims;
+
+namespace BienenstockCorpAPI.Models.AutenticationModels
 {
+    public class GetLoggedUserRequest
+    {
+        public ClaimsIdentity Identity { get; set; }
+    }
+
     public class GetLoggedUserResponse
     {
         public string? Avatar { get; set; }
