@@ -22,9 +22,9 @@ namespace BienenstockCorpAPI.Controllers
 
         #region Endpoints
         [HttpGet]
-        public IActionResult GetUsers()
+        public async Task<IActionResult> GetUsers()
         {
-            return Ok(_productService.GetProducts());
+            return Ok(await _productService.GetProducts());
         }
         #endregion
     }
