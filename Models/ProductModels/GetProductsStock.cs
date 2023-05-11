@@ -1,6 +1,6 @@
 ﻿namespace BienenstockCorpAPI.Models.UserModels
 {
-    public class GetProductsResponse
+    public class GetProductsStockResponse
     {
         public List<Item> Products { get; set; }
 
@@ -8,10 +8,8 @@
         {
             public int ProductId { get; set; }
             public string Name { get; set; }
-            public string ProductCode { get; set; }
-            public decimal Price { get; set; }
+            public string? ProductCode { get; set; }
             public DateTime? ExpirationDate { get; set; }
-            public DateTime EnterDate { get; set; }
             public int Quantity { get; set; }
         }
     }

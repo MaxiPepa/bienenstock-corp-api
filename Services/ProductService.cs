@@ -1,5 +1,4 @@
-﻿using BienenstockCorpAPI.Data.Entities;
-using BienenstockCorpAPI.Data;
+﻿using BienenstockCorpAPI.Data;
 using BienenstockCorpAPI.Models.UserModels;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,22 +16,21 @@ namespace BienenstockCorpAPI.Services
         #endregion
 
         #region Products
-        public async Task<GetProductsResponse> GetProducts()
+        public async Task<GetProductsStockResponse> GetProductsStock()
         {
-            var products = await _context.Product
+            var products = await _context.Stock
+                .Include(x => x.Product)
                 .ToListAsync();
 
-            return new GetProductsResponse
+            return new GetProductsStockResponse
             {
-                Products = products.Select(x => new GetProductsResponse.Item
+                Products = products.Select(x => new GetProductsStockResponse.Item
                 {
                     ProductId = x.ProductId,
-                    Name = x.Name,
-                    ProductCode = x.ProductCode,
-                    Price = x.Price,
+                    Name = x.Product.Name,
+                    ProductCode = x.Product.ProductCode,
                     Quantity = x.Quantity,
                     ExpirationDate = x.ExpirationDate,
-                    EnterDate = x.EnterDate,
                 }).ToList(),
             };
         }
