@@ -1,4 +1,5 @@
-﻿using BienenstockCorpAPI.Services;
+﻿using BienenstockCorpAPI.Models.PurchaseModels;
+using BienenstockCorpAPI.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -23,6 +24,17 @@ namespace BienenstockCorpAPI.Controllers
         public async Task<IActionResult> GetPendingPurchases()
         {
             return Ok(await _purchaseService.GetPendingPurchases());
+        }
+
+        [HttpPost("SavePurchase")]
+        public async Task<IActionResult> SavePurchase([FromBody] SavePurchaseRequest rq)
+        {
+            var rsp = await _purchaseService.SavePurchase(rq);
+
+            if (rsp.Success)
+                return Ok(rsp);
+            else
+                return BadRequest(rsp);
         }
         #endregion
     }
