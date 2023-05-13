@@ -25,5 +25,6 @@ namespace BienenstockCorpAPI.Controllers
             return Ok(await _productService.GetProductsStock());
         }
         #endregion
+
     }
 }
