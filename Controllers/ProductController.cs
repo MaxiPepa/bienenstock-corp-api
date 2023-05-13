@@ -22,10 +22,12 @@ namespace BienenstockCorpAPI.Controllers
 
         #region Endpoints
         [HttpGet]
-        public IActionResult GetUsers()
+        public IActionResult GetProducts()
         {
-            return Ok(_productService.GetProducts());
+            return Ok( _productService.GetProducts());
         }
         #endregion
+
+
     }
 }
