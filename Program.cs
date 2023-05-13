@@ -19,6 +19,7 @@ builder.Services.AddSqlServer<BienenstockCorpContext>(builder.Configuration.GetC
 builder.Services.AddScoped<AuthenticationService, AuthenticationService>();
 builder.Services.AddScoped<UserService, UserService>();
 builder.Services.AddScoped<ProductService, ProductService>();
+builder.Services.AddScoped<MessageService, MessageService>();
 #endregion
 
 
