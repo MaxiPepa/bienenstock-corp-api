@@ -13,6 +13,12 @@ public partial class Purchase
 
     public int UserId { get; set; }
 
+    public bool? Pending { get; set; }
+
+    public DateTime? EnterDate { get; set; }
+
+    public string Supplier { get; set; } = null!;
+
     public virtual ICollection<ProductPurchase> ProductPurchases { get; set; } = new List<ProductPurchase>();
 
     public virtual User User { get; set; } = null!;
