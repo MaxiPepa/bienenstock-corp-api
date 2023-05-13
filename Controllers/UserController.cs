@@ -30,7 +30,7 @@ namespace BienenstockCorpAPI.Controllers
         public async Task<IActionResult> SaveUser([FromBody] SaveUserRequest rq)
         {
             var rsp = await _userService.SaveUser(rq);
-                
+
             if (rsp.Success)
                 return Ok(rsp);
             else
