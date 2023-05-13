@@ -4,19 +4,23 @@ namespace BienenstockCorpAPI.Helpers
 {
     public class VerifyResponse
     {
-        public int? UserId { get; set; }
+        public int UserId { get; set; }
+        public string Name { get; set; }
+        public string LastName { get; set; }
+        public string Email { get; set; }
+        public string UserType { get; set; }
         public bool Success { get; set; }
         public string Message { get; set; }
     }
 
-    public class TokenVerifierHelper
+    public static class TokenVerifierHelper
     {
 
-        public static VerifyResponse TokenVerifier(ClaimsIdentity identity) 
+        public static VerifyResponse TokenVerifier(this ClaimsIdentity? identity) 
         {
             try
             {
-                if (identity == null || identity.Claims.Count() == 0)
+                if (identity == null || !identity.Claims.Any())
                 {
                     return new VerifyResponse
                     {
@@ -27,7 +31,11 @@ namespace BienenstockCorpAPI.Helpers
 
                 return new VerifyResponse
                 {
-                    UserId = Int32.Parse(identity.Claims.FirstOrDefault(x => x.Type == "UserId").Value),
+                    UserId = Int32.Parse(identity.Claims.First(x => x.Type == "UserId").Value),
+                    Name = identity.Claims.First(x => x.Type == "Name").Value,
+                    LastName = identity.Claims.First(x => x.Type == "LastName").Value,
+                    Email = identity.Claims.First(x => x.Type == "Email").Value,
+                    UserType = identity.Claims.First(x => x.Type == "UserType").Value,
                     Success = true,
                     Message = "Token verified correctly"
                 };

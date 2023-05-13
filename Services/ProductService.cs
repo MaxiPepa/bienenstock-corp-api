@@ -20,6 +20,7 @@ namespace BienenstockCorpAPI.Services
         {
             var products = await _context.Stock
                 .Include(x => x.Product)
+                .Where(x => x.Quantity > 0)
                 .ToListAsync();
 
             return new GetProductsStockResponse

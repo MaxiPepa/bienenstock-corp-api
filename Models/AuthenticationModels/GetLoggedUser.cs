@@ -4,7 +4,7 @@ namespace BienenstockCorpAPI.Models.AutenticationModels
 {
     public class GetLoggedUserRequest
     {
-        public ClaimsIdentity Identity { get; set; }
+        public ClaimsIdentity? Identity { get; set; }
     }
 
     public class GetLoggedUserResponse

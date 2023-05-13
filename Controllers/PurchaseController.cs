@@ -2,6 +2,7 @@
 using BienenstockCorpAPI.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace BienenstockCorpAPI.Controllers
 {
@@ -29,6 +30,8 @@ namespace BienenstockCorpAPI.Controllers
         [HttpPost("SavePurchase")]
         public async Task<IActionResult> SavePurchase([FromBody] SavePurchaseRequest rq)
         {
+            rq.Identity = HttpContext.User.Identity as ClaimsIdentity;
+
             var rsp = await _purchaseService.SavePurchase(rq);
 
             if (rsp.Success)

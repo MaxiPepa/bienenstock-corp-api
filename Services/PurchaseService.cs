@@ -47,6 +47,29 @@ namespace BienenstockCorpAPI.Services
 
         public async Task<SavePurchaseResponse> SavePurchase(SavePurchaseRequest rq)
         {
+            // Validations
+            var token = rq.Identity.TokenVerifier();
+
+            if (!token.Success)
+            {
+                return new SavePurchaseResponse
+                {
+                    Success = false,
+                    Message = token.Message,
+                };
+            }
+
+            var validation = ValidateSavePurchase(rq);
+
+            if (validation != String.Empty)
+            {
+                return new SavePurchaseResponse
+                {
+                    Success = false,
+                    Message = validation,
+                };
+            }
+
             var products = await _context.Product
                 .ToListAsync();
 
@@ -76,10 +99,10 @@ namespace BienenstockCorpAPI.Services
             var purchase = new Purchase
             {
                 Supplier = rq.Supplier,
-                Date = DateTime.Now,
+                Date = rq.PurchaseDate,
                 TotalPrice = purchasePrice,
-                Pending = false,
-                UserId = 1,
+                Pending = true,
+                UserId = token.UserId,
             };
 
             purchase.ProductPurchases.AddRange(rq.Products.Select(x => new ProductPurchase
@@ -124,5 +147,32 @@ namespace BienenstockCorpAPI.Services
             await _context.SaveChangesAsync();
         }
         #endregion
+
+        #region Validations
+        public static string ValidateSavePurchase(SavePurchaseRequest rq)
+        {
+            var error = String.Empty;
+
+            if (rq == null)
+            {
+                error = "Invalid Request";
+            }
+            else if (string.IsNullOrEmpty(rq.Supplier))
+            {
+                error = "Supplier is a required field";
+            }
+            else if (rq.Products.Count == 0)
+            {
+                error = "The purchase must have at least one product";
+            }
+            else if (rq.Products.Any(x => x.UnitPrice == 0 || x.Quantity == 0))
+            {
+                error = "Some of the products have invalid price or quantity";
+            }
+
+            return error;
+        }
+        #endregion
+
     }
 }
