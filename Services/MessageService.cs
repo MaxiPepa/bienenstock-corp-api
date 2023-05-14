@@ -2,6 +2,9 @@
 using BienenstockCorpAPI.Data;
 using Microsoft.EntityFrameworkCore;
 using BienenstockCorpAPI.Models.Message;
+using System.Security.Claims;
+using BienenstockCorpAPI.Helpers.Consts;
+using BienenstockCorpAPI.Helpers;
 
 namespace BienenstockCorpAPI.Services
 {
@@ -36,14 +39,18 @@ namespace BienenstockCorpAPI.Services
             };
         }
 
-        public async Task<SaveMessageResponse> SaveMessage(SaveMessageRequest rq)
+        public async Task<SaveMessageResponse> SaveMessage(SaveMessageRequest rq, ClaimsIdentity? identity)
         {
-            if (rq == null || string.IsNullOrEmpty(rq.Description))
+            var token = identity.TokenVerifier();
+
+            var validation = ValidateSaveMessage(rq, token);
+
+            if (!string.IsNullOrEmpty(validation))
             {
                 return new SaveMessageResponse
                 {
                     Success = false,
-                    Message = "There was a problem with your request"
+                    Message = validation,
                 };
             }
 
@@ -51,7 +58,7 @@ namespace BienenstockCorpAPI.Services
             {
                 Date = DateTime.Now,
                 Desciption = rq.Description,
-                UserId = 1,
+                UserId = token.UserId,
             };
 
             try
@@ -73,6 +80,27 @@ namespace BienenstockCorpAPI.Services
                     Message = ex.Message,
                 };
             }
+        }
+        #endregion
+
+        #region Validations
+        public static string ValidateSaveMessage(SaveMessageRequest rq, TokenVerifyResponse token)
+        {
+            var error = String.Empty;
+
+            // Token
+            if (!token.Success)
+            {
+                error = token.Message;
+            }
+
+            // Request
+            if (rq == null || string.IsNullOrEmpty(rq.Description))
+            {
+                error = "There was a problem with your request";
+            }
+
+            return error;
         }
         #endregion
     }

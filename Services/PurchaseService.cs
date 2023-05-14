@@ -1,9 +1,11 @@
 ﻿using BienenstockCorpAPI.Data;
 using BienenstockCorpAPI.Data.Entities;
 using BienenstockCorpAPI.Helpers;
+using BienenstockCorpAPI.Helpers.Consts;
 using BienenstockCorpAPI.Models.ProductModels;
 using BienenstockCorpAPI.Models.PurchaseModels;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace BienenstockCorpAPI.Services
 {
@@ -45,21 +47,12 @@ namespace BienenstockCorpAPI.Services
             };
         }
 
-        public async Task<SavePurchaseResponse> SavePurchase(SavePurchaseRequest rq)
+        public async Task<SavePurchaseResponse> SavePurchase(SavePurchaseRequest rq, ClaimsIdentity? identity)
         {
             // Validations
-            var token = rq.Identity.TokenVerifier();
+            var token = identity.TokenVerifier();
 
-            if (!token.Success)
-            {
-                return new SavePurchaseResponse
-                {
-                    Success = false,
-                    Message = token.Message,
-                };
-            }
-
-            var validation = ValidateSavePurchase(rq);
+            var validation = ValidateSavePurchase(rq, token);
 
             if (validation != String.Empty)
             {
@@ -149,10 +142,21 @@ namespace BienenstockCorpAPI.Services
         #endregion
 
         #region Validations
-        public static string ValidateSavePurchase(SavePurchaseRequest rq)
+        public static string ValidateSavePurchase(SavePurchaseRequest rq, TokenVerifyResponse token)
         {
             var error = String.Empty;
 
+            // Token
+            if (!token.Success) 
+            {
+                error = token.Message;
+            }
+            else if (token.UserType != UserType.BUYER)
+            {
+                error = "You don't have enough permissions";
+            }
+
+            // Request
             if (rq == null)
             {
                 error = "Invalid Request";

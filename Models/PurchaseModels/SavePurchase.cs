@@ -4,10 +4,9 @@ namespace BienenstockCorpAPI.Models.PurchaseModels
 {
     public class SavePurchaseRequest
     {
-        public ClaimsIdentity? Identity { get; set; }
         public string Supplier { get; set; }
         public DateTime PurchaseDate { get; set; }
-        public List<ProductItem> Products{ get; set;}
+        public List<ProductItem> Products { get; set;}
 
         public class ProductItem
         {

@@ -2,7 +2,7 @@
 
 namespace BienenstockCorpAPI.Helpers
 {
-    public class VerifyResponse
+    public class TokenVerifyResponse
     {
         public int UserId { get; set; }
         public string Name { get; set; }
@@ -16,20 +16,20 @@ namespace BienenstockCorpAPI.Helpers
     public static class TokenVerifierHelper
     {
 
-        public static VerifyResponse TokenVerifier(this ClaimsIdentity? identity) 
+        public static TokenVerifyResponse TokenVerifier(this ClaimsIdentity? identity) 
         {
             try
             {
                 if (identity == null || !identity.Claims.Any())
                 {
-                    return new VerifyResponse
+                    return new TokenVerifyResponse
                     {
                         Success = false,
                         Message = "Invalid credentials",
                     };
                 }
 
-                return new VerifyResponse
+                return new TokenVerifyResponse
                 {
                     UserId = Int32.Parse(identity.Claims.First(x => x.Type == "UserId").Value),
                     Name = identity.Claims.First(x => x.Type == "Name").Value,
@@ -42,7 +42,7 @@ namespace BienenstockCorpAPI.Helpers
             }   
             catch (Exception ex)
             {
-                return new VerifyResponse
+                return new TokenVerifyResponse
                 {
                     Success = false,
                     Message = ex.Message,

@@ -2,6 +2,8 @@
 using BienenstockCorpAPI.Data;
 using BienenstockCorpAPI.Models.LogModels;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
+using BienenstockCorpAPI.Helpers;
 
 namespace BienenstockCorpAPI.Services
 {
@@ -35,8 +37,19 @@ namespace BienenstockCorpAPI.Services
             };
         }
 
-        public async Task<SaveLogResponse> CreateLog(SaveLogRequest rq)
+        public async Task<SaveLogResponse> CreateLog(SaveLogRequest rq, ClaimsIdentity? identity)
         {
+            var token = identity.TokenVerifier();
+
+            if (!token.Success) 
+            {
+                return new SaveLogResponse
+                {
+                    Message = "Error creating Log",
+                    Success = false
+                };
+            }
+
             var logItem = new Log
             {
                 Description = rq.Description,
@@ -52,7 +65,7 @@ namespace BienenstockCorpAPI.Services
                 return new SaveLogResponse
                 {
                     Message = "Log successfully created",
-                    Success = true
+                    Success = true,
                 };
             }
             catch (Exception ex)

@@ -2,6 +2,7 @@
 using BienenstockCorpAPI.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace BienenstockCorpAPI.Controllers
 {
@@ -29,7 +30,7 @@ namespace BienenstockCorpAPI.Controllers
         [HttpPost("SaveMessage")]
         public async Task<IActionResult> SaveMessage([FromBody] SaveMessageRequest rq)
         {
-            var rsp = await _messageService.SaveMessage(rq);
+            var rsp = await _messageService.SaveMessage(rq, HttpContext.User.Identity as ClaimsIdentity);
 
             if (rsp.Success)
                 return Ok(rsp);

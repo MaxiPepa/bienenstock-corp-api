@@ -30,9 +30,7 @@ namespace BienenstockCorpAPI.Controllers
         [HttpPost("SavePurchase")]
         public async Task<IActionResult> SavePurchase([FromBody] SavePurchaseRequest rq)
         {
-            rq.Identity = HttpContext.User.Identity as ClaimsIdentity;
-
-            var rsp = await _purchaseService.SavePurchase(rq);
+            var rsp = await _purchaseService.SavePurchase(rq, HttpContext.User.Identity as ClaimsIdentity);
 
             if (rsp.Success)
                 return Ok(rsp);
