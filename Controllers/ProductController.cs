@@ -1,6 +1,4 @@
-﻿using BienenstockCorpAPI.Data;
-using BienenstockCorpAPI.Data.Entities;
-using BienenstockCorpAPI.Services;
+﻿using BienenstockCorpAPI.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -21,13 +19,12 @@ namespace BienenstockCorpAPI.Controllers
         #endregion
 
         #region Endpoints
-        [HttpGet]
-        public IActionResult GetProducts()
+        [HttpGet("GetProductsStock")]
+        public async Task<IActionResult> GetProductsStock()
         {
-            return Ok( _productService.GetProducts());
+            return Ok(await _productService.GetProductsStock());
         }
         #endregion
-
 
     }
 }

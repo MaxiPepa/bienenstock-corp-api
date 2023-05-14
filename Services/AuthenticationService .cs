@@ -57,6 +57,7 @@ namespace BienenstockCorpAPI.Services
                 new Claim("Name", user.Name),
                 new Claim("LastName", user.LastName),
                 new Claim("Email", user.Email),
+                new Claim("UserType", user.UserType),
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwt.Key));
@@ -86,19 +87,19 @@ namespace BienenstockCorpAPI.Services
 
         public async Task<GetLoggedUserResponse> GetLoggedUser(GetLoggedUserRequest rq)
         {
-            var tokenVerifierResponse = TokenVerifierHelper.TokenVerifier(rq.Identity);
+            var token = rq.Identity.TokenVerifier();
 
-            if (!tokenVerifierResponse.Success)
+            if (!token.Success)
             {
                 return new GetLoggedUserResponse
                 {
                     Success = false,
-                    Message = tokenVerifierResponse.Message,
+                    Message = token.Message,
                 };
             }
 
             var user = await _context.User
-                .Where(x => x.UserId == tokenVerifierResponse.UserId)
+                .Where(x => x.UserId == token.UserId)
                 .FirstOrDefaultAsync();
 
             if (user == null)
