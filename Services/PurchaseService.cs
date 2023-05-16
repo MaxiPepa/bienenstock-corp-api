@@ -42,6 +42,8 @@ namespace BienenstockCorpAPI.Services
                         ProductId = p.Product.ProductId,
                         ProductCode = p.Product.ProductCode,
                         Name = p.Product.Name,
+                        Quantity = p.Quantity,
+                        UnitPrice = p.UnitPrice,
                     }).ToList(),
                 }).ToList(),
             };
