@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace BienenstockCorpAPI.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("[controller]/[action]")]
     [Authorize]
     public class LogController : ControllerBase
     {
@@ -20,7 +20,7 @@ namespace BienenstockCorpAPI.Controllers
         #endregion
 
         #region Endpoints
-        [HttpGet("GetLogs")]
+        [HttpGet]
         public async Task<IActionResult> GetLogs()
         {
             return Ok(await _logService.GetLogs());

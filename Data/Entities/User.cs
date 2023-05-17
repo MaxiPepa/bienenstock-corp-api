@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BienenstockCorpAPI.Data.Entities;
 
@@ -30,4 +31,7 @@ public partial class User
     public virtual ICollection<Purchase> Purchases { get; set; } = new List<Purchase>();
 
     public virtual ICollection<Sale> Sales { get; set; } = new List<Sale>();
+
+    [NotMapped]
+    public string FullName => Name + " " + LastName;
 }

@@ -32,7 +32,7 @@ namespace BienenstockCorpAPI.Services
                 Users = users.Select(u => new GetUsersResponse.Item
                 {
                     UserId = u.UserId,
-                    FullName = u.Name + " " + u.LastName,
+                    FullName = u.FullName,
                     Email = u.Email,
                     UserType = u.UserType,
                 }).OrderBy(x => x.FullName).ToList(),
@@ -68,7 +68,7 @@ namespace BienenstockCorpAPI.Services
 
                 return new SaveUserResponse
                 {
-                    FullName = user.Name + " " + user.LastName,
+                    FullName = user.FullName,
                     Email = user.Email,
                     Message = "User successfully created",
                     Success = true,

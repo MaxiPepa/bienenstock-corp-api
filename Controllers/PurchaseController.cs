@@ -7,7 +7,7 @@ using System.Security.Claims;
 namespace BienenstockCorpAPI.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("[controller]/[action]")]
     [Authorize]
     public class PurchaseController : ControllerBase
     {
@@ -21,13 +21,13 @@ namespace BienenstockCorpAPI.Controllers
         #endregion
 
         #region Endpoints
-        [HttpGet("GetPendingPurchases")]
-        public async Task<IActionResult> GetPendingPurchases()
+        [HttpGet]
+        public async Task<IActionResult> GetPurchases()
         {
-            return Ok(await _purchaseService.GetPendingPurchases());
+            return Ok(await _purchaseService.GetPurchases());
         }
 
-        [HttpPost("SavePurchase")]
+        [HttpPost]
         public async Task<IActionResult> SavePurchase([FromBody] SavePurchaseRequest rq)
         {
             var rsp = await _purchaseService.SavePurchase(rq, HttpContext.User.Identity as ClaimsIdentity);
