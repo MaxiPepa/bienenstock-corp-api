@@ -79,7 +79,7 @@ namespace BienenstockCorpAPI.Services
                 Token = new JwtSecurityTokenHandler().WriteToken(token),
                 Avatar = user.Avatar,
                 Email = user.Email,
-                FullName = user.Name + " " + user.LastName,
+                FullName = user.FullName,
                 UserType = user.UserType,
                 Expiration = token.ValidTo,
             };
@@ -117,7 +117,7 @@ namespace BienenstockCorpAPI.Services
                 Message = "Succesfully retrieved user",
                 Avatar = user.Avatar,
                 Email = user.Email,
-                FullName = user.Name + " " + user.LastName,
+                FullName = user.FullName,
                 UserType = user.UserType,
             };
         }

@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace BienenstockCorpAPI.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("[controller]/[action]")]
     [Authorize]
     public class UserController : ControllerBase
     {
@@ -20,13 +20,13 @@ namespace BienenstockCorpAPI.Controllers
         #endregion
 
         #region Endpoints
-        [HttpGet("GetUsers")]
+        [HttpGet]
         public async Task<IActionResult> GetUsers()
         {
             return Ok(await _userService.GetUsers());
         }
 
-        [HttpPost("SaveUser")]
+        [HttpPost]
         public async Task<IActionResult> SaveUser([FromBody] SaveUserRequest rq)
         {
             var rsp = await _userService.SaveUser(rq);

@@ -30,7 +30,7 @@ namespace BienenstockCorpAPI.Services
                 Logs = logs.Select(l => new GetLogsResponse.LogItem
                 {
                     LogId = l.LogId,
-                    UserFullName = l.User.Name  + " " + l.User.LastName,
+                    UserFullName = l.User.FullName,
                     Description = l.Description,
                     Date = l.Date,
                 }).OrderBy(x => x.Date).ToList(),

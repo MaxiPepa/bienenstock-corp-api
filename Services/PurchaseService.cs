@@ -21,12 +21,12 @@ namespace BienenstockCorpAPI.Services
         #endregion
 
         #region Purchase
-        public async Task<GetPendingPurchasesResponse> GetPendingPurchases()
+        public async Task<GetPendingPurchasesResponse> GetPurchases()
         {
             var purchases = await _context.Purchase
                 .Include(x => x.ProductPurchases)
                 .ThenInclude(x => x.Product)
-                .Where(x => x.Pending == true)
+                .Include(x => x.User)
                 .ToListAsync();
 
             return new GetPendingPurchasesResponse
@@ -37,6 +37,8 @@ namespace BienenstockCorpAPI.Services
                     Date = x.Date,
                     TotalPrice = x.TotalPrice,
                     Supplier = x.Supplier,
+                    UserFullName = x.User.FullName,
+                    Pending = x.Pending,
                     Products = x.ProductPurchases.Select(p => new GetPendingPurchasesResponse.ProductItem
                     {
                         ProductId = p.Product.ProductId,

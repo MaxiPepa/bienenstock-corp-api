@@ -7,7 +7,7 @@ using System.Security.Claims;
 namespace BienenstockCorpAPI.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("[controller]/[action]")]
     [Authorize]
     public class MessageController : ControllerBase
     {
@@ -21,13 +21,13 @@ namespace BienenstockCorpAPI.Controllers
         #endregion
 
         #region Endpoints
-        [HttpGet("GetMessages")]
+        [HttpGet]
         public async Task<IActionResult> GetMessages()
         {
             return Ok(await _messageService.GetMessages());
         }
 
-        [HttpPost("SaveMessage")]
+        [HttpPost]
         public async Task<IActionResult> SaveMessage([FromBody] SaveMessageRequest rq)
         {
             var rsp = await _messageService.SaveMessage(rq, HttpContext.User.Identity as ClaimsIdentity);
