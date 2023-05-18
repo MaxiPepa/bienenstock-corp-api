@@ -2,6 +2,7 @@
 using BienenstockCorpAPI.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace BienenstockCorpAPI.Controllers
 {
@@ -36,6 +37,19 @@ namespace BienenstockCorpAPI.Controllers
             else
                 return BadRequest(rsp);
         }
+        
+
+        [HttpPost]
+        public async Task<IActionResult> ModifyUser([FromBody] ModifyUserRequest rq)
+        {
+            var rsp = await _userService.ModifyUser(rq, HttpContext.User.Identity as ClaimsIdentity);
+
+            if (rsp.Success)
+                return Ok(rsp);
+            else
+                return BadRequest(rsp);
+        }
         #endregion
+
     }
 }

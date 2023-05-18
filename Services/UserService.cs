@@ -5,6 +5,7 @@ using BienenstockCorpAPI.Helpers;
 using BienenstockCorpAPI.Helpers.Consts;
 using Microsoft.EntityFrameworkCore;
 using System.Text.RegularExpressions;
+using System.Security.Claims;
 
 namespace BienenstockCorpAPI.Services
 {
@@ -83,6 +84,57 @@ namespace BienenstockCorpAPI.Services
                 };
             }
         }
+
+        public async Task<ModifyUserResponse> ModifyUser(ModifyUserRequest rq, ClaimsIdentity? identity)
+        {
+            var token = identity.TokenVerifier();
+
+            var validation = ValidateModifyUser(rq,token);
+
+            if (validation != String.Empty)
+            {
+                return new ModifyUserResponse
+                {
+                    Message = validation,
+                    Success = false,
+                };
+            }
+
+            var user = _context.User.FirstOrDefault(r => r.UserId == rq.Id);
+
+            if (user == null)
+            {
+                return new ModifyUserResponse
+                {
+                    Message = "User not found",
+                    Success = false,
+                };
+            }
+
+            user.Name = rq.Name;
+            user.LastName = rq.LastName;
+            user.Email = rq.Email;
+            user.UserType = rq.UserType;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+
+                return new ModifyUserResponse
+                {
+                    Message = "User successfully modified",
+                    Success = true,
+                };
+            }
+            catch (Exception ex)
+            {
+                return new ModifyUserResponse
+                {
+                    Message = ex.Message,
+                    Success = false,
+                };
+            }
+        }
         #endregion
 
         #region Validations
@@ -114,6 +166,39 @@ namespace BienenstockCorpAPI.Services
                 rq.UserType != UserType.SELLER &&
                 rq.UserType != UserType.DEPOSITOR &&
                 rq.UserType != UserType.ANALYST) 
+            {
+                error = "Invalid user type";
+            }
+
+            return error;
+        }
+        private static string ValidateModifyUser(ModifyUserRequest rq,TokenVerifyResponse token)
+        {
+            var error = String.Empty;
+            var emailRegx = new Regex(@"\S+@\S+\.\S+");
+
+            if (rq == null)
+            {
+                error = "Invalid Request";
+            }
+            else if (!token.Success || token.UserType != UserType.ADMIN)
+            {
+                error = "Insufficient permissions";
+            }
+            else if (string.IsNullOrEmpty(rq.Name) || string.IsNullOrEmpty(rq.LastName))
+            {
+                error = "Invalid name or last name";
+            }
+            else if (string.IsNullOrEmpty(rq.Email) || !emailRegx.IsMatch(rq.Email))
+            {
+                error = "Provide a valid Email";
+            }
+            else if (string.IsNullOrEmpty(rq.UserType) ||
+                rq.UserType != UserType.ADMIN &&
+                rq.UserType != UserType.BUYER &&
+                rq.UserType != UserType.SELLER &&
+                rq.UserType != UserType.DEPOSITOR &&
+                rq.UserType != UserType.ANALYST)
             {
                 error = "Invalid user type";
             }
