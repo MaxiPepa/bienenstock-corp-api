@@ -24,6 +24,12 @@ namespace BienenstockCorpAPI.Controllers
         {
             return Ok(await _productService.GetProductsStock());
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GetProductCodes()
+        {
+            return Ok(await _productService.GetProductCodes());
+        }
         #endregion
 
     }

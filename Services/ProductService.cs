@@ -35,6 +35,22 @@ namespace BienenstockCorpAPI.Services
                 }).ToList(),
             };
         }
+
+        public async Task<GetProductCodesResponse> GetProductCodes()
+        {
+            var products = await _context.Product
+                .ToListAsync();
+
+            return new GetProductCodesResponse
+            {
+                ProductCodes = products.Select(x => new GetProductCodesResponse.Item
+                {
+                    ProductId = x.ProductId,
+                    ProductName = x.Name,
+                    ProductCode = x.ProductCode,
+                }).ToList(),
+            };
+        }
         #endregion
     }
 }
