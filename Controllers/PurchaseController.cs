@@ -24,13 +24,29 @@ namespace BienenstockCorpAPI.Controllers
         [HttpGet]
         public async Task<IActionResult> GetPurchases()
         {
-            return Ok(await _purchaseService.GetPurchases());
+            var rsp = await _purchaseService.GetPurchases(HttpContext.User.Identity as ClaimsIdentity);
+
+            if (rsp.Success)
+                return Ok(rsp);
+            else
+                return BadRequest(rsp);
         }
 
         [HttpPost]
         public async Task<IActionResult> SavePurchase([FromBody] SavePurchaseRequest rq)
         {
             var rsp = await _purchaseService.SavePurchase(rq, HttpContext.User.Identity as ClaimsIdentity);
+
+            if (rsp.Success)
+                return Ok(rsp);
+            else
+                return BadRequest(rsp);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CompletePurchase([FromBody] CompletePurchaseRequest rq)
+        {
+            var rsp = await _purchaseService.CompletePurchase(rq, HttpContext.User.Identity as ClaimsIdentity);
 
             if (rsp.Success)
                 return Ok(rsp);
