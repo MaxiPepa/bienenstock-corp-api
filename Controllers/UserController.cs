@@ -71,7 +71,6 @@ namespace BienenstockCorpAPI.Controllers
                 return Unauthorized(rsp);
         }
         
-
         [HttpPost]
         public async Task<IActionResult> ModifyUser([FromBody] ModifyUserRequest rq)
         {

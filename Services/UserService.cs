@@ -27,7 +27,6 @@ namespace BienenstockCorpAPI.Services
             var users = await _context.User
                 .ToListAsync();
 
-
             return new GetUsersResponse
             {
                 Users = users.Select(u => new GetUsersResponse.Item
@@ -145,7 +144,7 @@ namespace BienenstockCorpAPI.Services
                 };
             }
         }
-        
+
         public async Task<ChangeEmailResponse> ChangeEmail(ChangeEmailRequest rq, ClaimsIdentity? identity)
         {
             var token = identity.TokenVerifier();
@@ -264,7 +263,8 @@ namespace BienenstockCorpAPI.Services
                 };
             }
 
-            var user = _context.User.FirstOrDefault(r => r.UserId == rq.Id);
+            var user = _context.User
+                .FirstOrDefault(r => r.UserId == rq.Id);
 
             if (user == null)
             {
