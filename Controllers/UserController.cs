@@ -37,8 +37,40 @@ namespace BienenstockCorpAPI.Controllers
             else
                 return BadRequest(rsp);
         }
-        
 
+        [HttpPost]
+        public async Task<IActionResult> ChangeAvatar([FromBody] SaveChangeAvatarRequest rq)
+        {
+            var rsp = await _userService.ChangeAvatar(rq, HttpContext.User.Identity as ClaimsIdentity);
+
+            if (rsp.Success)
+                return Ok(rsp);
+            else
+                return Unauthorized(rsp);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ChangeEmail([FromBody] ChangeEmailRequest rq)
+        {
+            var rsp = await _userService.ChangeEmail(rq, HttpContext.User.Identity as ClaimsIdentity);
+
+            if (rsp.Success)
+                return Ok(rsp);
+            else
+                return Unauthorized(rsp);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequest rq)
+        {
+            var rsp = await _userService.ChangePassword(rq, HttpContext.User.Identity as ClaimsIdentity);
+
+            if (rsp.Success)
+                return Ok(rsp);
+            else
+                return Unauthorized(rsp);
+        }
+        
         [HttpPost]
         public async Task<IActionResult> ModifyUser([FromBody] ModifyUserRequest rq)
         {
