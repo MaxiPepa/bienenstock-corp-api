@@ -2,6 +2,7 @@
 using BienenstockCorpAPI.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace BienenstockCorpAPI.Controllers
 {
@@ -35,6 +36,39 @@ namespace BienenstockCorpAPI.Controllers
                 return Ok(rsp);
             else
                 return BadRequest(rsp);
+        }
+
+        [HttpPost("ChangeAvatar")]
+        public async Task<IActionResult> ChangeAvatar([FromBody] SaveChangeAvatarRequest rq)
+        {
+            var rsp = await _userService.ChangeAvatar(rq, HttpContext.User.Identity as ClaimsIdentity);
+
+            if (rsp.Success)
+                return Ok(rsp);
+            else
+                return Unauthorized(rsp);
+        }
+
+        [HttpPost("ChangeEmail")]
+        public async Task<IActionResult> ChangeEmail([FromBody] ChangeEmailRequest rq)
+        {
+            var rsp = await _userService.ChangeEmail(rq, HttpContext.User.Identity as ClaimsIdentity);
+
+            if (rsp.Success)
+                return Ok(rsp);
+            else
+                return Unauthorized(rsp);
+        }
+
+        [HttpPost("ChangePassword")]
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequest rq)
+        {
+            var rsp = await _userService.ChangePassword(rq, HttpContext.User.Identity as ClaimsIdentity);
+
+            if (rsp.Success)
+                return Ok(rsp);
+            else
+                return Unauthorized(rsp);
         }
         #endregion
     }
