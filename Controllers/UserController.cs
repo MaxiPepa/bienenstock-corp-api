@@ -7,7 +7,7 @@ using System.Security.Claims;
 namespace BienenstockCorpAPI.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("[controller]/[action]")]
     [Authorize]
     public class UserController : ControllerBase
     {
@@ -21,13 +21,13 @@ namespace BienenstockCorpAPI.Controllers
         #endregion
 
         #region Endpoints
-        [HttpGet("GetUsers")]
+        [HttpGet]
         public async Task<IActionResult> GetUsers()
         {
             return Ok(await _userService.GetUsers());
         }
 
-        [HttpPost("SaveUser")]
+        [HttpPost]
         public async Task<IActionResult> SaveUser([FromBody] SaveUserRequest rq)
         {
             var rsp = await _userService.SaveUser(rq);
@@ -38,7 +38,7 @@ namespace BienenstockCorpAPI.Controllers
                 return BadRequest(rsp);
         }
 
-        [HttpPost("ChangeAvatar")]
+        [HttpPost]
         public async Task<IActionResult> ChangeAvatar([FromBody] SaveChangeAvatarRequest rq)
         {
             var rsp = await _userService.ChangeAvatar(rq, HttpContext.User.Identity as ClaimsIdentity);
@@ -49,7 +49,7 @@ namespace BienenstockCorpAPI.Controllers
                 return Unauthorized(rsp);
         }
 
-        [HttpPost("ChangeEmail")]
+        [HttpPost]
         public async Task<IActionResult> ChangeEmail([FromBody] ChangeEmailRequest rq)
         {
             var rsp = await _userService.ChangeEmail(rq, HttpContext.User.Identity as ClaimsIdentity);
@@ -60,7 +60,7 @@ namespace BienenstockCorpAPI.Controllers
                 return Unauthorized(rsp);
         }
 
-        [HttpPost("ChangePassword")]
+        [HttpPost]
         public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequest rq)
         {
             var rsp = await _userService.ChangePassword(rq, HttpContext.User.Identity as ClaimsIdentity);
@@ -70,6 +70,19 @@ namespace BienenstockCorpAPI.Controllers
             else
                 return Unauthorized(rsp);
         }
+        
+
+        [HttpPost]
+        public async Task<IActionResult> ModifyUser([FromBody] ModifyUserRequest rq)
+        {
+            var rsp = await _userService.ModifyUser(rq, HttpContext.User.Identity as ClaimsIdentity);
+
+            if (rsp.Success)
+                return Ok(rsp);
+            else
+                return BadRequest(rsp);
+        }
         #endregion
+
     }
 }

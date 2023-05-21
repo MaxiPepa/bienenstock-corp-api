@@ -21,12 +21,26 @@ namespace BienenstockCorpAPI.Services
         #endregion
 
         #region Purchase
-        public async Task<GetPendingPurchasesResponse> GetPendingPurchases()
+        public async Task<GetPendingPurchasesResponse> GetPurchases(ClaimsIdentity? identity)
         {
+            var token = identity.TokenVerifier();
+
+            if (!token.Success ||
+                (token.UserType != UserType.BUYER &&
+                token.UserType != UserType.DEPOSITOR &&
+                token.UserType != UserType.ADMIN))
+            {
+                return new GetPendingPurchasesResponse
+                {
+                    Message = "Insufficient permissions",
+                    Success = false,
+                };
+            }
+
             var purchases = await _context.Purchase
                 .Include(x => x.ProductPurchases)
                 .ThenInclude(x => x.Product)
-                .Where(x => x.Pending == true)
+                .Include(x => x.User)
                 .ToListAsync();
 
             return new GetPendingPurchasesResponse
@@ -37,13 +51,19 @@ namespace BienenstockCorpAPI.Services
                     Date = x.Date,
                     TotalPrice = x.TotalPrice,
                     Supplier = x.Supplier,
+                    UserFullName = x.User.FullName,
+                    Pending = x.Pending,
                     Products = x.ProductPurchases.Select(p => new GetPendingPurchasesResponse.ProductItem
                     {
                         ProductId = p.Product.ProductId,
                         ProductCode = p.Product.ProductCode,
                         Name = p.Product.Name,
+                        Quantity = p.Quantity,
+                        UnitPrice = p.UnitPrice,
                     }).ToList(),
                 }).ToList(),
+                Message = "Purchases retrieved",
+                Success = true,
             };
         }
 
@@ -125,6 +145,79 @@ namespace BienenstockCorpAPI.Services
                 };
             }
         }
+
+        public async Task<CompletePurchaseResponse> CompletePurchase(CompletePurchaseRequest rq, ClaimsIdentity? identity)
+        {
+            var token = identity.TokenVerifier();
+
+            var validation = ValidateAddStock(rq, token);
+
+            if (!string.IsNullOrEmpty(validation))
+            {
+                return new CompletePurchaseResponse
+                {
+                    Message = validation,
+                    Success = false,
+                };
+            }
+
+            var purchase = await _context.Purchase
+                .Include(x => x.ProductPurchases)
+                .FirstOrDefaultAsync(x => x.PurchaseId == rq.PurchaseId);
+
+            if (purchase == null || purchase.Pending == false) 
+            {
+                return new CompletePurchaseResponse
+                {
+                    Message = "Purchase was not found or it is already completed",
+                    Success = false,
+                };
+            }
+
+            var productPurchasesIds = purchase.ProductPurchases.Select(x => x.ProductId).ToList();
+
+            var stock = await _context.Stock
+                .Where(x => productPurchasesIds.Contains(x.ProductId))
+                .ToListAsync();
+
+            foreach (var s in stock)
+            {
+                s.Quantity += purchase.ProductPurchases.First(x => x.ProductId == s.ProductId).Quantity;
+            }
+
+            var newStock = purchase.ProductPurchases.Where(x => !stock.Any(s => s.ProductId == x.ProductId)).ToList();
+
+            if (newStock.Any())
+            {
+                _context.Stock.AddRange(newStock.Select(x => new Stock
+                {
+                    ProductId = x.ProductId,
+                    Quantity = x.Quantity,
+                    ExpirationDate = rq.ExpirationDates.FirstOrDefault(ep => ep.ProductId == x.ProductId)?.ExpirationDate,
+                }).ToList());
+            }
+
+            purchase.Pending = false;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+
+                return new CompletePurchaseResponse
+                {
+                    Success = true,
+                    Message = "Purchase completed",
+                };
+            }
+            catch (Exception ex)
+            {
+                return new CompletePurchaseResponse
+                {
+                    Message = ex.Message,
+                    Success = false,
+                };
+            }
+        }
         #endregion
 
         #region Helpers
@@ -172,6 +265,22 @@ namespace BienenstockCorpAPI.Services
             else if (rq.Products.Any(x => x.UnitPrice == 0 || x.Quantity == 0))
             {
                 error = "Some of the products have invalid price or quantity";
+            }
+
+            return error;
+        }
+
+        public static string ValidateAddStock(CompletePurchaseRequest rq, TokenVerifyResponse token)
+        {
+            var error = String.Empty;
+
+            if (rq == null)
+            {
+                error = "Invalid request";
+            }
+            else if (!token.Success || token.UserType != UserType.DEPOSITOR)
+            {
+                error = "Insufficient permissions";
             }
 
             return error;

@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace BienenstockCorpAPI.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("[controller]/[action]")]
     [Authorize]
     public class ProductController : ControllerBase
     {
@@ -19,10 +19,16 @@ namespace BienenstockCorpAPI.Controllers
         #endregion
 
         #region Endpoints
-        [HttpGet("GetProductsStock")]
+        [HttpGet]
         public async Task<IActionResult> GetProductsStock()
         {
             return Ok(await _productService.GetProductsStock());
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetProductCodes()
+        {
+            return Ok(await _productService.GetProductCodes());
         }
         #endregion
 

@@ -6,7 +6,7 @@ using System.Security.Claims;
 namespace BienenstockCorpAPI.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("[controller]/[action]")]
     public class AuthenticationController : ControllerBase 
     {
         #region Constructor
@@ -19,7 +19,7 @@ namespace BienenstockCorpAPI.Controllers
         #endregion
 
         #region Endpoints
-        [HttpPost("Login")]
+        [HttpPost]
         public async Task<IActionResult> Login([FromBody] LoginRequest rq)
         {
             var rsp = await _authenticationService.Login(rq);
@@ -30,7 +30,7 @@ namespace BienenstockCorpAPI.Controllers
                 return Unauthorized(rsp);
         }
 
-        [HttpPost("GetLoggedUser")]
+        [HttpPost]
         public async Task<IActionResult> GetLoggedUser()
         {
             var rsp = await _authenticationService.GetLoggedUser(new GetLoggedUserRequest { Identity = HttpContext.User.Identity as ClaimsIdentity });

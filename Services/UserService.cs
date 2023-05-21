@@ -33,7 +33,7 @@ namespace BienenstockCorpAPI.Services
                 Users = users.Select(u => new GetUsersResponse.Item
                 {
                     UserId = u.UserId,
-                    FullName = u.Name + " " + u.LastName,
+                    FullName = u.FullName,
                     Email = u.Email,
                     UserType = u.UserType,
                 }).OrderBy(x => x.FullName).ToList(),
@@ -97,6 +97,7 @@ namespace BienenstockCorpAPI.Services
                 };
             }
         }
+        
         public async Task<SaveChangeAvatarResponse> ChangeAvatar(SaveChangeAvatarRequest rq, ClaimsIdentity? identity)
         {
             var token = identity.TokenVerifier();
@@ -144,6 +145,7 @@ namespace BienenstockCorpAPI.Services
                 };
             }
         }
+        
         public async Task<ChangeEmailResponse> ChangeEmail(ChangeEmailRequest rq, ClaimsIdentity? identity)
         {
             var token = identity.TokenVerifier();
@@ -231,7 +233,7 @@ namespace BienenstockCorpAPI.Services
 
                 return new SaveUserResponse
                 {
-                    FullName = user.Name + " " + user.LastName,
+                    FullName = user.FullName,
                     Email = user.Email,
                     Message = "User successfully created",
                     Success = true,
@@ -240,6 +242,57 @@ namespace BienenstockCorpAPI.Services
             catch (Exception ex)
             {
                 return new SaveUserResponse
+                {
+                    Message = ex.Message,
+                    Success = false,
+                };
+            }
+        }
+
+        public async Task<ModifyUserResponse> ModifyUser(ModifyUserRequest rq, ClaimsIdentity? identity)
+        {
+            var token = identity.TokenVerifier();
+
+            var validation = ValidateModifyUser(rq,token);
+
+            if (validation != String.Empty)
+            {
+                return new ModifyUserResponse
+                {
+                    Message = validation,
+                    Success = false,
+                };
+            }
+
+            var user = _context.User.FirstOrDefault(r => r.UserId == rq.Id);
+
+            if (user == null)
+            {
+                return new ModifyUserResponse
+                {
+                    Message = "User not found",
+                    Success = false,
+                };
+            }
+
+            user.Name = rq.Name;
+            user.LastName = rq.LastName;
+            user.Email = rq.Email;
+            user.UserType = rq.UserType;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+
+                return new ModifyUserResponse
+                {
+                    Message = "User successfully modified",
+                    Success = true,
+                };
+            }
+            catch (Exception ex)
+            {
+                return new ModifyUserResponse
                 {
                     Message = ex.Message,
                     Success = false,
@@ -304,6 +357,40 @@ namespace BienenstockCorpAPI.Services
             else if (rq.NewPassword != rq.ConfirmPassword)
             {
                 error = "The passwords don't match";
+            }
+
+            return error;
+        }
+
+        private static string ValidateModifyUser(ModifyUserRequest rq,TokenVerifyResponse token)
+        {
+            var error = String.Empty;
+            var emailRegx = new Regex(@"\S+@\S+\.\S+");
+
+            if (rq == null)
+            {
+                error = "Invalid Request";
+            }
+            else if (!token.Success || token.UserType != UserType.ADMIN)
+            {
+                error = "Insufficient permissions";
+            }
+            else if (string.IsNullOrEmpty(rq.Name) || string.IsNullOrEmpty(rq.LastName))
+            {
+                error = "Invalid name or last name";
+            }
+            else if (string.IsNullOrEmpty(rq.Email) || !emailRegx.IsMatch(rq.Email))
+            {
+                error = "Provide a valid Email";
+            }
+            else if (string.IsNullOrEmpty(rq.UserType) ||
+                rq.UserType != UserType.ADMIN &&
+                rq.UserType != UserType.BUYER &&
+                rq.UserType != UserType.SELLER &&
+                rq.UserType != UserType.DEPOSITOR &&
+                rq.UserType != UserType.ANALYST)
+            {
+                error = "Invalid user type";
             }
 
             return error;

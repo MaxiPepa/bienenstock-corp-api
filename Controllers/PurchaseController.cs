@@ -7,7 +7,7 @@ using System.Security.Claims;
 namespace BienenstockCorpAPI.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("[controller]/[action]")]
     [Authorize]
     public class PurchaseController : ControllerBase
     {
@@ -21,16 +21,32 @@ namespace BienenstockCorpAPI.Controllers
         #endregion
 
         #region Endpoints
-        [HttpGet("GetPendingPurchases")]
-        public async Task<IActionResult> GetPendingPurchases()
+        [HttpGet]
+        public async Task<IActionResult> GetPurchases()
         {
-            return Ok(await _purchaseService.GetPendingPurchases());
+            var rsp = await _purchaseService.GetPurchases(HttpContext.User.Identity as ClaimsIdentity);
+
+            if (rsp.Success)
+                return Ok(rsp);
+            else
+                return BadRequest(rsp);
         }
 
-        [HttpPost("SavePurchase")]
+        [HttpPost]
         public async Task<IActionResult> SavePurchase([FromBody] SavePurchaseRequest rq)
         {
             var rsp = await _purchaseService.SavePurchase(rq, HttpContext.User.Identity as ClaimsIdentity);
+
+            if (rsp.Success)
+                return Ok(rsp);
+            else
+                return BadRequest(rsp);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CompletePurchase([FromBody] CompletePurchaseRequest rq)
+        {
+            var rsp = await _purchaseService.CompletePurchase(rq, HttpContext.User.Identity as ClaimsIdentity);
 
             if (rsp.Success)
                 return Ok(rsp);
