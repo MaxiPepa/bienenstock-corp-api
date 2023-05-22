@@ -2,7 +2,7 @@
 {
     public class SaveChangeAvatarRequest
     {
-        public string Avatar { get; set; }
+        public string? Avatar { get; set; }
     }
 
     public class SaveChangeAvatarResponse
