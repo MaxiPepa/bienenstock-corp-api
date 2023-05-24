@@ -1,5 +1,10 @@
 ﻿namespace BienenstockCorpAPI.Models.UserModels
 {
+    public class GetUsersRequest
+    {
+        public bool? Inactive { get; set; }
+    }
+
     public class GetUsersResponse
     {
         public List<Item> Users { get; set; }

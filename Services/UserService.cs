@@ -22,10 +22,17 @@ namespace BienenstockCorpAPI.Services
 
 
         #region User
-        public async Task<GetUsersResponse> GetUsers()
+        public async Task<GetUsersResponse> GetUsers(GetUsersRequest rq)
         {
-            var users = await _context.User
-                .ToListAsync();
+            var query = _context.User
+                .AsQueryable();
+
+            if (rq.Inactive == true)
+                query.Where(x => x.Inactive);
+            else
+                query.Where(x => !x.Inactive);
+            
+            var users = await query.ToListAsync();
 
             return new GetUsersResponse
             {
@@ -299,6 +306,65 @@ namespace BienenstockCorpAPI.Services
                 };
             }
         }
+
+        public async Task<DeleteUserResponse> DeleteUser(DeleteUserRequest rq, ClaimsIdentity? identity)
+        {
+            var token = identity.TokenVerifier();
+            var validation = ValidateDeleteUser(rq, token);
+
+            if (validation != String.Empty)
+            {
+                return new DeleteUserResponse
+                {
+                    Message = validation,
+                    Success = false,
+                };
+            }
+
+            var user = await _context.User
+                .Where(x => x.UserId == rq.UserId)
+                .FirstOrDefaultAsync();
+
+            if (user == null)
+            {
+                return new DeleteUserResponse
+                {
+                    Success = false,
+                    Message = "User not found",
+                };
+            }
+
+            if (user.Bills.Count > 0 ||
+                user.Logs.Count > 0 ||
+                user.Messages.Count > 0 ||
+                user.Purchases.Count > 0 ||
+                user.Sales.Count > 0)
+            {
+                user.Inactive = true;
+            }
+            else
+            {
+                _context.User.Remove(user);
+            }
+
+            try
+            {
+                await _context.SaveChangesAsync();
+                return new DeleteUserResponse
+                {
+                    Success = true,
+                    Message = "Succesfully user deleted",
+                };
+            }
+            catch (Exception ex)
+            {
+                return new DeleteUserResponse
+                {
+                    Success = false,
+                    Message = ex.Message,
+                };
+            }
+        }
         #endregion
 
         #region Validations
@@ -394,6 +460,27 @@ namespace BienenstockCorpAPI.Services
             }
 
             return error;
+        }
+
+        private static string ValidateDeleteUser(DeleteUserRequest rq, TokenVerifyResponse token)
+        {
+            var error = String.Empty;
+
+            if (rq == null)
+            {
+                error = "Invalid Request";
+            }
+            else if (!token.Success || token.UserType != UserType.ADMIN)
+            {
+                error = "Insufficient permissions";
+            }
+            else if(rq.UserId == token.UserId)
+            {
+                error = "You can't delete your own User";
+            }
+
+            return error;
+
         }
         #endregion
     }

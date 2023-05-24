@@ -45,6 +45,15 @@ namespace BienenstockCorpAPI.Services
                 };
             };
 
+            if (user.Inactive)
+            {
+                return new LoginResponse
+                {
+                    Success = false,
+                    Message = "This User has been deleted or inactivated",
+                };
+            };
+
             var jwt = _configuration.GetSection("Jwt").Get<Jwt>();
 
             var claims = new[]
