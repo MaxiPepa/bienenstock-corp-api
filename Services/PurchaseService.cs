@@ -107,7 +107,7 @@ namespace BienenstockCorpAPI.Services
             
             decimal purchasePrice = 0;
 
-            rq.Products.ForEach(x => purchasePrice += x.UnitPrice);
+            rq.Products.ForEach(x => purchasePrice += x.UnitPrice * x.Quantity);
 
             var purchase = new Purchase
             {
