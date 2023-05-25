@@ -9,7 +9,7 @@ public partial class Product
 
     public string Name { get; set; } = null!;
 
-    public string? ProductCode { get; set; }
+    public string ProductCode { get; set; } = null!;
 
     public virtual ICollection<ProductPurchase> ProductPurchases { get; set; } = new List<ProductPurchase>();
 

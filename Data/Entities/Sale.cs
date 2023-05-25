@@ -15,7 +15,9 @@ public partial class Sale
 
     public DateTime? DispatchDate { get; set; }
 
-    public bool? Dispatched { get; set; }
+    public bool Dispatched { get; set; }
+
+    public bool Cancelled { get; set; }
 
     public virtual ICollection<Bill> Bills { get; set; } = new List<Bill>();
 

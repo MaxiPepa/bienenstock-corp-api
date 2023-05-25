@@ -15,6 +15,8 @@ public partial class Purchase
 
     public bool? Pending { get; set; }
 
+    public bool Cancelled { get; set; }
+
     public DateTime? EnterDate { get; set; }
 
     public string Supplier { get; set; } = null!;
