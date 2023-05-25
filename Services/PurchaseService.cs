@@ -114,7 +114,6 @@ namespace BienenstockCorpAPI.Services
                 Supplier = rq.Supplier,
                 Date = rq.PurchaseDate,
                 TotalPrice = purchasePrice,
-                Pending = true,
                 UserId = token.UserId,
             };
 
@@ -165,7 +164,7 @@ namespace BienenstockCorpAPI.Services
                 .Include(x => x.ProductPurchases)
                 .FirstOrDefaultAsync(x => x.PurchaseId == rq.PurchaseId);
 
-            if (purchase == null || purchase.Pending == false) 
+            if (purchase == null || !purchase.Pending) 
             {
                 return new CompletePurchaseResponse
                 {
