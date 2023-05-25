@@ -177,7 +177,7 @@ namespace BienenstockCorpAPI.Services
                 return new ChangeEmailResponse
                 {
                     Success = false,
-                    Message = "Email not found",
+                    Message = "User not found",
                 };
             }
 

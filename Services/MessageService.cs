@@ -3,7 +3,6 @@ using BienenstockCorpAPI.Data;
 using Microsoft.EntityFrameworkCore;
 using BienenstockCorpAPI.Models.Message;
 using System.Security.Claims;
-using BienenstockCorpAPI.Helpers.Consts;
 using BienenstockCorpAPI.Helpers;
 
 namespace BienenstockCorpAPI.Services
@@ -34,7 +33,7 @@ namespace BienenstockCorpAPI.Services
                     Description = m.Desciption,
                     Date = m.Date,
                     Avatar = m.User.Avatar,
-                    FullName = m.User.Name + ' ' + m.User.LastName,
+                    FullName = m.User.FullName,
                 }).ToList(),
             };
         }
@@ -56,7 +55,6 @@ namespace BienenstockCorpAPI.Services
 
             var message = new Message
             {
-                Date = DateTime.Now,
                 Desciption = rq.Description,
                 UserId = token.UserId,
             };

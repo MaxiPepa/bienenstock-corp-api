@@ -13,7 +13,9 @@ public partial class Purchase
 
     public int UserId { get; set; }
 
-    public bool? Pending { get; set; }
+    public bool Pending { get; set; }
+
+    public bool Cancelled { get; set; }
 
     public DateTime? EnterDate { get; set; }
 

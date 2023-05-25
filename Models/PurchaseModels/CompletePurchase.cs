@@ -6,7 +6,7 @@ namespace BienenstockCorpAPI.Models.PurchaseModels
     {
         public int PurchaseId { get; set; }
 
-        public List<Expiration> ExpirationDates { get; set; }
+        public List<Expiration> ExpirationDates { get; set; } = null!;
 
         public class Expiration
         {
@@ -18,6 +18,6 @@ namespace BienenstockCorpAPI.Models.PurchaseModels
     public class CompletePurchaseResponse
     {
         public bool Success { get; set; }
-        public string Message { get; set; }
+        public string? Message { get; set; }
     }
 }

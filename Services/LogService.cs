@@ -53,7 +53,6 @@ namespace BienenstockCorpAPI.Services
             var logItem = new Log
             {
                 Description = rq.Description,
-                Date = DateTime.Now,
                 UserId = rq.UserId,
             };
 
