@@ -21,7 +21,7 @@ namespace BienenstockCorpAPI.Services
         #endregion
 
         #region Purchase
-        public async Task<GetPendingPurchasesResponse> GetPurchases(ClaimsIdentity? identity)
+        public async Task<GetPurchasesResponse> GetPurchases(ClaimsIdentity? identity)
         {
             var token = identity.TokenVerifier();
 
@@ -30,7 +30,7 @@ namespace BienenstockCorpAPI.Services
                 token.UserType != UserType.DEPOSITOR &&
                 token.UserType != UserType.ADMIN))
             {
-                return new GetPendingPurchasesResponse
+                return new GetPurchasesResponse
                 {
                     Message = "Insufficient permissions",
                     Success = false,
@@ -43,9 +43,9 @@ namespace BienenstockCorpAPI.Services
                 .Include(x => x.User)
                 .ToListAsync();
 
-            return new GetPendingPurchasesResponse
+            return new GetPurchasesResponse
             {
-                Purchases = purchases.Select(x => new GetPendingPurchasesResponse.PurchaseItem
+                Purchases = purchases.Select(x => new GetPurchasesResponse.PurchaseItem
                 {
                     PurchaseId = x.PurchaseId,
                     Date = x.Date,
@@ -53,7 +53,9 @@ namespace BienenstockCorpAPI.Services
                     Supplier = x.Supplier,
                     UserFullName = x.User.FullName,
                     Pending = x.Pending,
-                    Products = x.ProductPurchases.Select(p => new GetPendingPurchasesResponse.ProductItem
+                    Cancelled = x.Cancelled,
+                    EnterDate = x.EnterDate,
+                    Products = x.ProductPurchases.Select(p => new GetPurchasesResponse.ProductItem
                     {
                         ProductId = p.Product.ProductId,
                         ProductCode = p.Product.ProductCode,
@@ -197,6 +199,7 @@ namespace BienenstockCorpAPI.Services
             }
 
             purchase.Pending = false;
+            purchase.EnterDate = rq.EnterDate;
 
             try
             {

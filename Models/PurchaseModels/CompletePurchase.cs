@@ -1,11 +1,9 @@
-﻿using System.Security.Claims;
-
-namespace BienenstockCorpAPI.Models.PurchaseModels
+﻿namespace BienenstockCorpAPI.Models.PurchaseModels
 {
     public class CompletePurchaseRequest
     {
         public int PurchaseId { get; set; }
-
+        public DateTime EnterDate { get; set; }
         public List<Expiration> ExpirationDates { get; set; } = null!;
 
         public class Expiration
