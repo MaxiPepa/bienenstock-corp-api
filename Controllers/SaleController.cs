@@ -53,6 +53,17 @@ namespace BienenstockCorpAPI.Controllers
             else
                 return BadRequest(rsp);
         }
+
+        [HttpPost]
+        public async Task<IActionResult> CancelSale([FromBody] CancelSaleRequest rq)
+        {
+            var rsp = await _saleService.CancelSale(rq, HttpContext.User.Identity as ClaimsIdentity);
+
+            if (rsp.Success)
+                return Ok(rsp);
+            else
+                return BadRequest(rsp);
+        }
         #endregion
     }
 }

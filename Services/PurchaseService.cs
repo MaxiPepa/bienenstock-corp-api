@@ -174,6 +174,14 @@ namespace BienenstockCorpAPI.Services
                     Success = false,
                 };
             }
+            else if (purchase.Cancelled)
+            {
+                return new CompletePurchaseResponse
+                {
+                    Message = "The requested purchase is cancelled",
+                    Success = false,
+                };
+            }
 
             var productPurchasesIds = purchase.ProductPurchases.Select(x => x.ProductId).ToList();
 
@@ -214,6 +222,69 @@ namespace BienenstockCorpAPI.Services
             catch (Exception ex)
             {
                 return new CompletePurchaseResponse
+                {
+                    Message = ex.Message,
+                    Success = false,
+                };
+            }
+        }
+
+        public async Task<CancelPurchaseResponse> CancelPurchase(CancelPurchaseRequest rq, ClaimsIdentity? identity)
+        {
+            var token = identity.TokenVerifier();
+
+            if (!token.Success)
+            {
+                return new CancelPurchaseResponse
+                {
+                    Success = false,
+                    Message = token.Message,
+                };
+            }
+            else if (token.UserType != UserType.BUYER)
+            {
+                return new CancelPurchaseResponse
+                {
+                    Success = false,
+                    Message = "Insufficient permissions",
+                };
+            }
+
+            var purchase = await _context.Purchase
+                .FirstOrDefaultAsync(x => x.PurchaseId == rq.PurchaseId);
+
+            if (purchase == null || !purchase.Pending)
+            {
+                return new CancelPurchaseResponse
+                {
+                    Message = "Purchase was not found or it has already arrived",
+                    Success = false,
+                };
+            }
+            else if (purchase.Cancelled)
+            {
+                return new CancelPurchaseResponse
+                {
+                    Message = "The requested purchase is already cancelled",
+                    Success = false,
+                };
+            }
+
+            purchase.Cancelled = true;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+
+                return new CancelPurchaseResponse
+                {
+                    Success = true,
+                    Message = "Purchase cancelled",
+                };
+            }
+            catch (Exception ex)
+            {
+                return new CancelPurchaseResponse
                 {
                     Message = ex.Message,
                     Success = false,

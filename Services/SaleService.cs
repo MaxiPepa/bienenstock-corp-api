@@ -173,6 +173,14 @@ namespace BienenstockCorpAPI.Services
                     Success = false,
                 };
             }
+            else if (sale.Cancelled)
+            {
+                return new DispatchSaleResponse
+                {
+                    Message = "The requested sale is cancelled",
+                    Success = false,
+                };
+            }
 
             sale.Dispatched = true;
             sale.DispatchDate = rq.DispatchDate;
@@ -190,6 +198,73 @@ namespace BienenstockCorpAPI.Services
             catch (Exception ex)
             {
                 return new DispatchSaleResponse
+                {
+                    Message = ex.Message,
+                    Success = false,
+                };
+            }
+        }
+
+        public async Task<CancelSaleResponse> CancelSale(CancelSaleRequest rq, ClaimsIdentity? identity)
+        {
+            var token = identity.TokenVerifier();
+
+            if (!token.Success)
+            {
+                return new CancelSaleResponse
+                {
+                    Success = false,
+                    Message = token.Message,
+                };
+            }
+            else if (token.UserType != UserType.SELLER)
+            {
+                return new CancelSaleResponse
+                {
+                    Success = false,
+                    Message = "Insufficient permissions",
+                };
+            }
+
+            var sale = await _context.Sale
+                .Include(x => x.ProductSales)
+                .FirstOrDefaultAsync(x => x.SaleId == rq.SaleId);
+
+            if (sale == null || sale.Dispatched || sale.Cancelled)
+            {
+                return new CancelSaleResponse
+                {
+                    Message = "Sale was not found or it is already dispatched/cancelled",
+                    Success = false,
+                };
+            }
+
+            var saleProductsIds = sale.ProductSales.Select(x => x.ProductId).ToList();
+
+            var stock = await _context.Stock
+                .Where(x => saleProductsIds.Contains(x.ProductId))
+                .ToListAsync();
+
+            foreach (var s in stock)
+            {
+                s.Quantity += sale.ProductSales.First(x => x.ProductId == s.ProductId).Quantity;
+            }
+
+            sale.Cancelled = true;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+
+                return new CancelSaleResponse
+                {
+                    Success = true,
+                    Message = "Sale cancelled",
+                };
+            }
+            catch (Exception ex)
+            {
+                return new CancelSaleResponse
                 {
                     Message = ex.Message,
                     Success = false,
