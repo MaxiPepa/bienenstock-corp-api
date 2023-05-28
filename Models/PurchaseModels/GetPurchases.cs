@@ -1,5 +1,12 @@
 ﻿namespace BienenstockCorpAPI.Models.PurchaseModels
 {
+    public class GetPurchasesRequest
+    {
+        public bool? Pending { get; set; }
+        public bool? Cancelled { get; set; }
+        public bool? Completed { get; set; }
+    }
+
     public class GetPurchasesResponse
     {
         public List<PurchaseItem> Purchases { get; set; } = null!;

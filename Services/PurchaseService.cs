@@ -21,7 +21,7 @@ namespace BienenstockCorpAPI.Services
         #endregion
 
         #region Purchase
-        public async Task<GetPurchasesResponse> GetPurchases(ClaimsIdentity? identity)
+        public async Task<GetPurchasesResponse> GetPurchases(GetPurchasesRequest rq, ClaimsIdentity? identity)
         {
             var token = identity.TokenVerifier();
 
@@ -37,15 +37,27 @@ namespace BienenstockCorpAPI.Services
                 };
             }
 
-            var purchases = await _context.Purchase
+            var query = _context.Purchase
                 .Include(x => x.ProductPurchases)
                 .ThenInclude(x => x.Product)
                 .Include(x => x.User)
-                .ToListAsync();
+                .AsQueryable();
+
+            // Filters
+            if (rq.Pending == true)
+                query = query.Where(x => x.Pending);
+
+            if (rq.Cancelled == true)
+                query = query.Where(x => x.Cancelled);
+
+            if (rq.Completed == true)
+                query = query.Where(x => !x.Pending);
+
+            var purchases = await query.ToListAsync();
 
             return new GetPurchasesResponse
             {
-                Purchases = purchases.Select(x => new GetPurchasesResponse.PurchaseItem
+                Purchases = query.Select(x => new GetPurchasesResponse.PurchaseItem
                 {
                     PurchaseId = x.PurchaseId,
                     Date = x.Date,

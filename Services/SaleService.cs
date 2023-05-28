@@ -20,8 +20,8 @@ namespace BienenstockCorpAPI.Services
         }
         #endregion
 
-        #region Message
-        public async Task<GetSalesResponse> GetSales(ClaimsIdentity? identity)
+        #region Sale
+        public async Task<GetSalesResponse> GetSales(GetSalesRequest rq, ClaimsIdentity? identity)
         {
             var token = identity.TokenVerifier();
 
@@ -37,11 +37,23 @@ namespace BienenstockCorpAPI.Services
                 };
             }
 
-            var sales = await _context.Sale
+            var query = _context.Sale
                 .Include(x => x.ProductSales)
                 .ThenInclude(x => x.Product)
                 .Include(x => x.User)
-                .ToListAsync();
+                .AsQueryable();
+
+            // Filters
+            if (rq.PendingDispatch == true)
+                query = query.Where(x => !x.Dispatched);
+
+            if (rq.Cancelled == true)
+                query = query.Where(x => x.Cancelled);
+
+            if (rq.Dispatched == true)
+                query = query.Where(x => x.Dispatched);
+
+            var sales = await query.ToListAsync();
 
             return new GetSalesResponse
             {
