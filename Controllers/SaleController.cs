@@ -22,9 +22,9 @@ namespace BienenstockCorpAPI.Controllers
 
         #region Endpoints
         [HttpGet]
-        public async Task<IActionResult> GetSales()
+        public async Task<IActionResult> GetSales([FromQuery] GetSalesRequest rq)
         {
-            var rsp = await _saleService.GetSales(HttpContext.User.Identity as ClaimsIdentity);
+            var rsp = await _saleService.GetSales(rq, HttpContext.User.Identity as ClaimsIdentity);
 
             if (rsp.Success)
                 return Ok(rsp);

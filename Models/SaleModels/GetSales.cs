@@ -1,5 +1,12 @@
 ﻿namespace BienenstockCorpAPI.Models.SaleModels
 {
+    public class GetSalesRequest
+    {
+        public bool? PendingDispatch { get; set; }
+        public bool? Cancelled { get; set; }
+        public bool? Dispatched { get; set; }
+    }
+
     public class GetSalesResponse
     {
         public List<SaleItem> Sales { get; set; } = null!;
