@@ -1,6 +1,4 @@
-﻿using System.Security.Claims;
-
-namespace BienenstockCorpAPI.Models.PurchaseModels
+﻿namespace BienenstockCorpAPI.Models.PurchaseModels
 {
     public class SavePurchaseRequest
     {

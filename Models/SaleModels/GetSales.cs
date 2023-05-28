@@ -1,18 +1,19 @@
-﻿namespace BienenstockCorpAPI.Models.PurchaseModels
+﻿namespace BienenstockCorpAPI.Models.SaleModels
 {
-    public class GetPendingPurchasesResponse
+    public class GetSalesResponse
     {
-        public List<PurchaseItem> Purchases { get; set; } = null!;
+        public List<SaleItem> Sales { get; set; } = null!;
         public string? Message { get; set; }
         public bool Success { get; set; }
 
-        public class PurchaseItem
+        public class SaleItem
         {
-            public int PurchaseId { get; set; }
+            public int SaleId { get; set; }
             public DateTime Date { get; set; }
             public decimal TotalPrice { get; set; }
-            public string Supplier { get; set; } = null!;
-            public bool Pending { get; set; }
+            public bool Dispatched { get; set; }
+            public DateTime? DispatchDate { get; set; }
+            public bool Cancelled { get; set; }
             public string UserFullName { get; set; } = null!;
             public List<ProductItem> Products{ get; set; } = null!;
         }
@@ -21,7 +22,7 @@
         {
             public int ProductId { get; set; }
             public string Name { get; set; } = null!;
-            public string? ProductCode { get; set; }
+            public string ProductCode { get; set; } = null!;
             public int Quantity { get; set; }
             public decimal UnitPrice { get; set;}
         }
