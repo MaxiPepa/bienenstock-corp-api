@@ -366,7 +366,7 @@ namespace BienenstockCorpAPI.Services
             }
         }
 
-        public async Task<ActivateUserResponse>ActivateUser(ActivateUserRequest rq, ClaimsIdentity ? identity)
+        public async Task<ActivateUserResponse> ActivateUser(ActivateUserRequest rq, ClaimsIdentity? identity)
         {
             var token = identity.TokenVerifier();
             var validation = ValidateActivateUser(rq, token);
@@ -393,7 +393,7 @@ namespace BienenstockCorpAPI.Services
                 };
             }
 
-            if (user.Inactive == false)
+            if (!user.Inactive)
             {
                 return new ActivateUserResponse
                 {
