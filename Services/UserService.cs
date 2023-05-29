@@ -365,6 +365,65 @@ namespace BienenstockCorpAPI.Services
                 };
             }
         }
+
+        public async Task<ActivateUserResponse>ActivateUser(ActivateUserRequest rq, ClaimsIdentity ? identity)
+        {
+            var token = identity.TokenVerifier();
+            var validation = ValidateActivateUser(rq, token);
+
+            if (validation != String.Empty)
+            {
+                return new ActivateUserResponse
+                {
+                    Message = validation,
+                    Success = false,
+                };
+            }
+
+            var user = await _context.User
+                .Where(x => x.UserId == rq.UserId)
+                .FirstOrDefaultAsync();
+
+            if (user == null)
+            {
+                return new ActivateUserResponse
+                {
+                    Success = false,
+                    Message = "User not found",
+                };
+            }
+
+            if (user.Inactive == false)
+            {
+                return new ActivateUserResponse
+                {
+                    Success = false,
+                    Message = "User already activated"
+                };
+            }
+            else
+            {
+                user.Inactive = false;
+            }
+
+            try
+            {
+                await _context.SaveChangesAsync();
+                return new ActivateUserResponse
+                {
+                    Success = true,
+                    Message = "Succesfully user activated",
+                };
+            }
+            catch (Exception ex)
+            {
+                return new ActivateUserResponse
+                {
+                    Success = false,
+                    Message = ex.Message,
+                };
+            }
+        }
         #endregion
 
         #region Validations
@@ -481,6 +540,26 @@ namespace BienenstockCorpAPI.Services
 
             return error;
 
+        }
+
+        private static string ValidateActivateUser(ActivateUserRequest rq, TokenVerifyResponse token)
+        {
+            var error = String.Empty;
+
+            if (rq == null)
+            {
+                error = "Invalid Request";
+            }
+            else if (!token.Success || token.UserType != UserType.ADMIN)
+            {
+                error = "Insufficient permissions";
+            }
+            else if (rq.UserId == token.UserId)
+            {
+                error = "You can't activate your own User";
+            }
+
+            return error;
         }
         #endregion
     }
