@@ -81,6 +81,28 @@ namespace BienenstockCorpAPI.Controllers
             else
                 return BadRequest(rsp);
         }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteUser([FromBody] DeleteUserRequest rq)
+        {
+            var rsp = await _userService.DeleteUser(rq, HttpContext.User.Identity as ClaimsIdentity);
+
+            if(rsp.Success)
+                return Ok(rsp);
+            else
+                return BadRequest(rsp);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ActivateUser([FromBody] ActivateUserRequest rq)
+        {
+            var rsp = await _userService.ActivateUser(rq, HttpContext.User.Identity as ClaimsIdentity);
+
+            if (rsp.Success)
+                return Ok(rsp);
+            else
+                return BadRequest(rsp);
+        }
         #endregion
 
     }
