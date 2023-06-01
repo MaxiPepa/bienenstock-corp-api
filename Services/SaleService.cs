@@ -6,6 +6,7 @@ using BienenstockCorpAPI.Helpers;
 using BienenstockCorpAPI.Helpers.Consts;
 using BienenstockCorpAPI.Models.SaleModels;
 using BienenstockCorpAPI.Models.PurchaseModels;
+using BienenstockCorpAPI.Models.LogModels;
 
 namespace BienenstockCorpAPI.Services
 {
@@ -13,10 +14,12 @@ namespace BienenstockCorpAPI.Services
     {
         #region Constructor
         private readonly BienenstockCorpContext _context;
+        private readonly LogService _logService;
 
-        public SaleService(BienenstockCorpContext context)
+        public SaleService(BienenstockCorpContext context, LogService logService)
         {
             _context = context;
+            _logService = logService;
         }
         #endregion
 
@@ -142,6 +145,11 @@ namespace BienenstockCorpAPI.Services
             {
                 _context.Sale.Add(sale);
                 await _context.SaveChangesAsync();
+                await _logService.CreateLog(new CreateLogRequest
+                {
+                    UserId = token.UserId,
+                    Description = "Has made a new sale",
+                });
 
                 return new SaveSaleResponse
                 {
@@ -200,6 +208,11 @@ namespace BienenstockCorpAPI.Services
             try
             {
                 await _context.SaveChangesAsync();
+                await _logService.CreateLog(new CreateLogRequest
+                {
+                    UserId = token.UserId,
+                    Description = "Dispatched your Sale",
+                });
 
                 return new DispatchSaleResponse
                 {
@@ -267,6 +280,11 @@ namespace BienenstockCorpAPI.Services
             try
             {
                 await _context.SaveChangesAsync();
+                await _logService.CreateLog(new CreateLogRequest
+                {
+                    UserId = token.UserId,
+                    Description = "Cancelled a Sale",
+                });
 
                 return new CancelSaleResponse
                 {

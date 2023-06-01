@@ -30,7 +30,7 @@ namespace BienenstockCorpAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> SaveUser([FromBody] SaveUserRequest rq)
         {
-            var rsp = await _userService.SaveUser(rq);
+            var rsp = await _userService.SaveUser(rq, HttpContext.User.Identity as ClaimsIdentity);
 
             if (rsp.Success)
                 return Ok(rsp);

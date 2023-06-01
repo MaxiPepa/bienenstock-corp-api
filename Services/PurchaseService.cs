@@ -2,6 +2,7 @@
 using BienenstockCorpAPI.Data.Entities;
 using BienenstockCorpAPI.Helpers;
 using BienenstockCorpAPI.Helpers.Consts;
+using BienenstockCorpAPI.Models.LogModels;
 using BienenstockCorpAPI.Models.ProductModels;
 using BienenstockCorpAPI.Models.PurchaseModels;
 using Microsoft.EntityFrameworkCore;
@@ -13,10 +14,12 @@ namespace BienenstockCorpAPI.Services
     {
         #region Constructor
         private readonly BienenstockCorpContext _context;
+        private readonly LogService _logService;
 
-        public PurchaseService(BienenstockCorpContext context)
+        public PurchaseService(BienenstockCorpContext context, LogService logService)
         {
             _context = context;
+            _logService = logService;
         }
         #endregion
 
@@ -142,6 +145,11 @@ namespace BienenstockCorpAPI.Services
             {
                 _context.Purchase.Add(purchase);
                 await _context.SaveChangesAsync();
+                await _logService.CreateLog(new CreateLogRequest
+                {
+                    UserId = token.UserId,
+                    Description = "Has made a new purchase",
+                });
 
                 return new SavePurchaseResponse
                 {
@@ -224,6 +232,11 @@ namespace BienenstockCorpAPI.Services
             try
             {
                 await _context.SaveChangesAsync();
+                await _logService.CreateLog(new CreateLogRequest
+                {
+                    UserId = token.UserId,
+                    Description = "Completed a purchase",
+                });
 
                 return new CompletePurchaseResponse
                 {
@@ -287,6 +300,11 @@ namespace BienenstockCorpAPI.Services
             try
             {
                 await _context.SaveChangesAsync();
+                await _logService.CreateLog(new CreateLogRequest
+                {
+                    UserId = token.UserId,
+                    Description = "Cancelled a purchase",
+                });
 
                 return new CancelPurchaseResponse
                 {

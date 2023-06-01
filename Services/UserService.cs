@@ -6,6 +6,7 @@ using BienenstockCorpAPI.Helpers.Consts;
 using Microsoft.EntityFrameworkCore;
 using System.Text.RegularExpressions;
 using System.Security.Claims;
+using BienenstockCorpAPI.Models.LogModels;
 
 namespace BienenstockCorpAPI.Services
 {
@@ -13,10 +14,12 @@ namespace BienenstockCorpAPI.Services
     {
         #region Constructor
         private readonly BienenstockCorpContext _context;
+        private readonly LogService _logService;
 
-        public UserService(BienenstockCorpContext context)
+        public UserService(BienenstockCorpContext context, LogService logService)
         {
             _context = context;
+            _logService = logService;
         }
         #endregion
 
@@ -211,9 +214,11 @@ namespace BienenstockCorpAPI.Services
             }
         }
 
-        public async Task<SaveUserResponse> SaveUser(SaveUserRequest rq)
+        public async Task<SaveUserResponse> SaveUser(SaveUserRequest rq, ClaimsIdentity? identity)
         {
-            var validation = ValidateSaveUser(rq);
+            var token = identity.TokenVerifier();
+
+            var validation = ValidateSaveUser(rq, token);
 
             if (validation != String.Empty)
             {
@@ -237,6 +242,11 @@ namespace BienenstockCorpAPI.Services
             {
                 _context.User.Add(user);
                 await _context.SaveChangesAsync();
+                await _logService.CreateLog(new CreateLogRequest
+                {
+                    UserId = token.UserId,
+                    Description = $"Created a new user '{user.Name} {user.LastName}'",
+                });
 
                 return new SaveUserResponse
                 {
@@ -291,6 +301,11 @@ namespace BienenstockCorpAPI.Services
             try
             {
                 await _context.SaveChangesAsync();
+                await _logService.CreateLog(new CreateLogRequest
+                {
+                    UserId = token.UserId,
+                    Description = $"Modified the user '{user.Name} {user.LastName}'",
+                });
 
                 return new ModifyUserResponse
                 {
@@ -351,6 +366,12 @@ namespace BienenstockCorpAPI.Services
             try
             {
                 await _context.SaveChangesAsync();
+                await _logService.CreateLog(new CreateLogRequest
+                {
+                    UserId = token.UserId,
+                    Description = $"Deleted/inactivated the user '{user.Name} {user.LastName}'",
+                });
+
                 return new DeleteUserResponse
                 {
                     Success = true,
@@ -410,6 +431,12 @@ namespace BienenstockCorpAPI.Services
             try
             {
                 await _context.SaveChangesAsync();
+                await _logService.CreateLog(new CreateLogRequest
+                {
+                    UserId = token.UserId,
+                    Description = $"Activated the user '{user.Name} {user.LastName}'",
+                });
+
                 return new ActivateUserResponse
                 {
                     Success = true,
@@ -428,7 +455,7 @@ namespace BienenstockCorpAPI.Services
         #endregion
 
         #region Validations
-        private static string ValidateSaveUser(SaveUserRequest rq)
+        private static string ValidateSaveUser(SaveUserRequest rq, TokenVerifyResponse token)
         {
             var error = String.Empty;
             var emailRegx = new Regex(@"\S+@\S+\.\S+");
@@ -437,6 +464,10 @@ namespace BienenstockCorpAPI.Services
             if (rq == null)
             {
                 error = "Invalid Request";
+            }
+            else if (!token.Success)
+            {
+                error = token.Message;
             }
             else if (string.IsNullOrEmpty(rq.Name) || string.IsNullOrEmpty(rq.LastName))
             {
