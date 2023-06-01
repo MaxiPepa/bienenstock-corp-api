@@ -39,10 +39,11 @@ namespace BienenstockCorpAPI.Services
                 Users = users.Select(u => new GetUsersResponse.Item
                 {
                     UserId = u.UserId,
-                    FullName = u.FullName,
+                    Name = u.Name,
+                    LastName = u.LastName,
                     Email = u.Email,
                     UserType = u.UserType,
-                }).OrderBy(x => x.FullName).ToList(),
+                }).OrderBy(x => x.UserId).ToList(),
             };
         }
 
