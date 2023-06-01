@@ -43,7 +43,7 @@ namespace BienenstockCorpAPI.Services
                     LastName = u.LastName,
                     Email = u.Email,
                     UserType = u.UserType,
-                }).OrderBy(x => x.UserId).ToList(),
+                }).OrderBy(x => x.Name).ToList(),
             };
         }
 
