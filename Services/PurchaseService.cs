@@ -78,7 +78,7 @@ namespace BienenstockCorpAPI.Services
                         Quantity = p.Quantity,
                         UnitPrice = p.UnitPrice,
                     }).ToList(),
-                }).ToList(),
+                }).OrderByDescending(x => x.Date).ToList(),
                 Message = "Purchases retrieved",
                 Success = true,
             };
@@ -296,6 +296,7 @@ namespace BienenstockCorpAPI.Services
             }
 
             purchase.Cancelled = true;
+            purchase.Pending = false;
 
             try
             {
