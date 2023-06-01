@@ -77,7 +77,7 @@ namespace BienenstockCorpAPI.Services
                         Quantity = p.Quantity,
                         UnitPrice = p.UnitPrice,
                     }).ToList(),
-                }).ToList(),
+                }).OrderByDescending(x => x.Date).ToList(),
                 Message = "Sales retrieved",
                 Success = true,
             };
