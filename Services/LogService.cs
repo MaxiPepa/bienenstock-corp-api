@@ -4,6 +4,7 @@ using BienenstockCorpAPI.Models.LogModels;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using BienenstockCorpAPI.Helpers;
+using BienenstockCorpAPI.Helpers.Consts;
 
 namespace BienenstockCorpAPI.Services
 {
@@ -19,11 +20,23 @@ namespace BienenstockCorpAPI.Services
         #endregion
 
         #region Log
-        public async Task<GetLogsResponse> GetLogs()
+        public async Task<GetLogsResponse> GetLogs(ClaimsIdentity? identity)
         {
-            var logs = await _context.Log
+            var token = identity.TokenVerifier();
+
+            var userType = token.UserType;
+
+            var query = _context.Log
                 .Include(x => x.User)
-                .ToListAsync();
+                .AsQueryable();
+
+            if (userType == UserType.BUYER || userType == UserType.SELLER || userType == UserType.DEPOSITOR)
+                query.Where(x => x.User.UserType == UserType.BUYER || x.User.UserType == UserType.SELLER || x.User.UserType == UserType.DEPOSITOR);
+
+            if (userType == UserType.ANALYST)
+                query.Where(x => x.User.UserType == UserType.ANALYST);
+
+            var logs = await query.ToListAsync(); 
 
             return new GetLogsResponse
             {
@@ -33,23 +46,12 @@ namespace BienenstockCorpAPI.Services
                     UserFullName = l.User.FullName,
                     Description = l.Description,
                     Date = l.Date,
-                }).OrderBy(x => x.Date).ToList(),
+                }).OrderByDescending(x => x.Date).ToList(),
             };
         }
 
-        public async Task<SaveLogResponse> CreateLog(SaveLogRequest rq, ClaimsIdentity? identity)
-        {
-            var token = identity.TokenVerifier();
-
-            if (!token.Success) 
-            {
-                return new SaveLogResponse
-                {
-                    Message = "Error creating Log",
-                    Success = false
-                };
-            }
-
+        public async Task<CreateLogResponse> CreateLog(CreateLogRequest rq)
+        { 
             var logItem = new Log
             {
                 Description = rq.Description,
@@ -61,7 +63,7 @@ namespace BienenstockCorpAPI.Services
                 _context.Log.Add(logItem);
                 await _context.SaveChangesAsync();
 
-                return new SaveLogResponse
+                return new CreateLogResponse
                 {
                     Message = "Log successfully created",
                     Success = true,
@@ -69,7 +71,7 @@ namespace BienenstockCorpAPI.Services
             }
             catch (Exception ex)
             {
-                return new SaveLogResponse
+                return new CreateLogResponse
                 {
                     Message = ex.Message,
                     Success = false,
