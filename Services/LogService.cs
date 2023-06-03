@@ -5,6 +5,8 @@ using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using BienenstockCorpAPI.Helpers;
 using BienenstockCorpAPI.Helpers.Consts;
+using Microsoft.AspNetCore.SignalR;
+using BienenstockCorpAPI.Hubs;
 
 namespace BienenstockCorpAPI.Services
 {
@@ -12,10 +14,12 @@ namespace BienenstockCorpAPI.Services
     {
         #region Constructor
         private readonly BienenstockCorpContext _context;
+        private readonly IHubContext<LogHub> _logHub;
 
-        public LogService(BienenstockCorpContext context)
+        public LogService(BienenstockCorpContext context, IHubContext<LogHub> logHub)
         {
             _context = context;
+            _logHub = logHub;
         }
         #endregion
 
@@ -64,6 +68,8 @@ namespace BienenstockCorpAPI.Services
                 _context.Log.Add(logItem);
                 await _context.SaveChangesAsync();
 
+                LogUpdate(HubCode.LOG);
+
                 return new CreateLogResponse
                 {
                     Message = "Log successfully created",
@@ -78,6 +84,20 @@ namespace BienenstockCorpAPI.Services
                     Success = false,
                 };
             }
+        }
+        #endregion
+
+        #region Privates
+        private void LogUpdate(string hubCode)
+        {
+            if (string.IsNullOrEmpty(hubCode))
+                return;
+
+            var group = _logHub.Clients.Group(hubCode);
+
+            // Trigger client side update
+            if (group != null)
+                group.SendAsync("LogUpdate");
         }
         #endregion
     }

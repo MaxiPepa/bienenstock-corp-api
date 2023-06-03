@@ -1,4 +1,5 @@
 using BienenstockCorpAPI.Data;
+using BienenstockCorpAPI.Hubs;
 using BienenstockCorpAPI.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -81,6 +82,8 @@ builder.Services.AddSwaggerGen(setupAction =>
     });
 });
 
+// SignalR
+builder.Services.AddSignalR();
 
 var app = builder.Build();
 
@@ -95,9 +98,17 @@ app.UseHttpsRedirection();
 
 app.UseCors(MyAllowSpecificOrigins);
 
+app.UseRouting();
+
 app.UseAuthentication();
 
 app.UseAuthorization();
+
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapHub<ChatHub>("/chat");
+    endpoints.MapHub<LogHub>("/log");
+});
 
 app.MapControllers();
 
