@@ -10,6 +10,7 @@
             public string Description { get; set; } = null!;
             public DateTime Date { get; set; }
             public string UserFullName { get; set; } = null!;
+            public string? UserAvatar { get; set; }
         }
 
     }

@@ -44,6 +44,7 @@ namespace BienenstockCorpAPI.Services
                 {
                     LogId = l.LogId,
                     UserFullName = l.User.FullName,
+                    UserAvatar = l.User.Avatar,
                     Description = l.Description,
                     Date = l.Date,
                 }).OrderByDescending(x => x.Date).ToList(),
