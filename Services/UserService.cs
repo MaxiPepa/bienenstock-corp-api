@@ -31,10 +31,10 @@ namespace BienenstockCorpAPI.Services
                 .AsQueryable();
 
             if (rq.Inactive == true)
-                query.Where(x => x.Inactive);
-            else
-                query.Where(x => !x.Inactive);
-            
+                query = query.Where(x => x.Inactive);
+            else if (rq.Inactive == false)
+                query = query.Where(x => !x.Inactive);
+
             var users = await query.ToListAsync();
 
             return new GetUsersResponse
@@ -46,6 +46,7 @@ namespace BienenstockCorpAPI.Services
                     LastName = u.LastName,
                     Email = u.Email,
                     UserType = u.UserType,
+                    Active = !u.Inactive,
                 }).OrderBy(x => x.Name).ToList(),
             };
         }

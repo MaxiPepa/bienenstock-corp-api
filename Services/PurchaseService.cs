@@ -54,7 +54,7 @@ namespace BienenstockCorpAPI.Services
                 query = query.Where(x => x.Cancelled);
 
             if (rq.Completed == true)
-                query = query.Where(x => !x.Pending);
+                query = query.Where(x => !x.Pending && !x.Cancelled);
 
             var purchases = await query.ToListAsync();
 
