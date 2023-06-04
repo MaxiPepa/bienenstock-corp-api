@@ -23,6 +23,7 @@ builder.Services.AddScoped<MessageService, MessageService>();
 builder.Services.AddScoped<LogService, LogService>();
 builder.Services.AddScoped<PurchaseService, PurchaseService>();
 builder.Services.AddScoped<SaleService, SaleService>();
+builder.Services.AddScoped<ReportService, ReportService>();
 #endregion
 
 
