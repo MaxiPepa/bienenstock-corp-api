@@ -1,7 +1,7 @@
 ﻿using BienenstockCorpAPI.Data.Entities;
 using BienenstockCorpAPI.Data;
 using Microsoft.EntityFrameworkCore;
-using BienenstockCorpAPI.Models.Message;
+using BienenstockCorpAPI.Models.MessageModels;
 using System.Security.Claims;
 using BienenstockCorpAPI.Helpers;
 

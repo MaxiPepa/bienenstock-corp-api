@@ -1,4 +1,4 @@
-﻿using BienenstockCorpAPI.Models.Message;
+﻿using BienenstockCorpAPI.Models.MessageModels;
 using BienenstockCorpAPI.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

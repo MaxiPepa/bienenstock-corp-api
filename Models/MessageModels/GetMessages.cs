@@ -1,4 +1,4 @@
-﻿namespace BienenstockCorpAPI.Models.Message
+﻿namespace BienenstockCorpAPI.Models.MessageModels
 {
     public class GetMessagesResponse 
     {
