@@ -14,7 +14,7 @@ namespace BienenstockCorpAPI.Hubs
         {
             var query = Context.GetHttpContext()?.Request.Query;
 
-            Groups.AddToGroupAsync(Context.ConnectionId, query["HubCode"]);
+            Groups.AddToGroupAsync(Context.ConnectionId, query["HubCode"].ToString());
 
             return base.OnConnectedAsync();
         }

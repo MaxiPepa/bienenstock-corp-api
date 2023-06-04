@@ -2,13 +2,13 @@
 {
     public class HubCode
     {
-        public static string CHAT = "ChatHub";
-        public static string LOG = "LogHub";
-        public static string PRODUCT = "ProductHub";
-        public static string ADMIN = "AdminHub";
-        public static string BUY = "BuyHub";
-        public static string SALE = "SaleHub";
-        public static string DESPOSIT = "DepositHub";
-        public static string REPORT = "ReportHub";
+        public static string CHAT = "chatHub";
+        public static string LOG = "logHub";
+        public static string PRODUCT = "productHub";
+        public static string ADMIN = "adminHub";
+        public static string BUY = "buyHub";
+        public static string SALE = "saleHub";
+        public static string DESPOSIT = "depositHub";
+        public static string REPORT = "reportHub";
     }
 }
