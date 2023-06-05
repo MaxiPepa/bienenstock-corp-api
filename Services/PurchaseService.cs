@@ -2,9 +2,11 @@
 using BienenstockCorpAPI.Data.Entities;
 using BienenstockCorpAPI.Helpers;
 using BienenstockCorpAPI.Helpers.Consts;
+using BienenstockCorpAPI.Hubs;
 using BienenstockCorpAPI.Models.LogModels;
 using BienenstockCorpAPI.Models.ProductModels;
 using BienenstockCorpAPI.Models.PurchaseModels;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 
@@ -15,11 +17,13 @@ namespace BienenstockCorpAPI.Services
         #region Constructor
         private readonly BienenstockCorpContext _context;
         private readonly LogService _logService;
+        private readonly IHubContext<PageHub> _pageHub;
 
-        public PurchaseService(BienenstockCorpContext context, LogService logService)
+        public PurchaseService(BienenstockCorpContext context, LogService logService, IHubContext<PageHub> pageHub)
         {
             _context = context;
             _logService = logService;
+            _pageHub = pageHub;
         }
         #endregion
 
@@ -151,6 +155,9 @@ namespace BienenstockCorpAPI.Services
                     Description = "Has made a new purchase",
                 });
 
+                PurchaseUpdate(HubCode.BUY);
+                DepositUpdate(HubCode.DESPOSIT);
+
                 return new SavePurchaseResponse
                 {
                     Success = true,
@@ -238,6 +245,10 @@ namespace BienenstockCorpAPI.Services
                     Description = "Completed a purchase",
                 });
 
+                PurchaseUpdate(HubCode.BUY);
+                DepositUpdate(HubCode.DESPOSIT);
+                ProductUpdate(HubCode.PRODUCT);
+
                 return new CompletePurchaseResponse
                 {
                     Success = true,
@@ -306,6 +317,9 @@ namespace BienenstockCorpAPI.Services
                     UserId = token.UserId,
                     Description = "Cancelled a purchase",
                 });
+
+                PurchaseUpdate(HubCode.BUY);
+                DepositUpdate(HubCode.DESPOSIT);
 
                 return new CancelPurchaseResponse
                 {
@@ -391,5 +405,42 @@ namespace BienenstockCorpAPI.Services
         }
         #endregion
 
+        #region Privates
+        private void PurchaseUpdate(string hubCode)
+        {
+            if (string.IsNullOrEmpty(hubCode))
+                return;
+
+            var group = _pageHub.Clients.Group(hubCode);
+
+            // Trigger client side update
+            if (group != null)
+                group.SendAsync("PurchaseUpdate");
+        }
+
+        private void DepositUpdate(string hubCode)
+        {
+            if (string.IsNullOrEmpty(hubCode))
+                return;
+
+            var group = _pageHub.Clients.Group(hubCode);
+
+            // Trigger client side update
+            if (group != null)
+                group.SendAsync("DepositUpdate");
+        }
+
+        private void ProductUpdate(string hubCode)
+        {
+            if (string.IsNullOrEmpty(hubCode))
+                return;
+
+            var group = _pageHub.Clients.Group(hubCode);
+
+            // Trigger client side update
+            if (group != null)
+                group.SendAsync("ProductUpdate");
+        }
+        #endregion
     }
 }

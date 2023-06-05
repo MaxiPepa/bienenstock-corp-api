@@ -4,6 +4,9 @@ using Microsoft.EntityFrameworkCore;
 using BienenstockCorpAPI.Models.MessageModels;
 using System.Security.Claims;
 using BienenstockCorpAPI.Helpers;
+using Microsoft.AspNetCore.SignalR;
+using BienenstockCorpAPI.Hubs;
+using BienenstockCorpAPI.Helpers.Consts;
 
 namespace BienenstockCorpAPI.Services
 {
@@ -11,10 +14,12 @@ namespace BienenstockCorpAPI.Services
     {
         #region Constructor
         private readonly BienenstockCorpContext _context;
+        private readonly IHubContext<ChatHub> _chatHub;
 
-        public MessageService(BienenstockCorpContext context)
+        public MessageService(BienenstockCorpContext context, IHubContext<ChatHub> chatHub)
         {
             _context = context;
+            _chatHub = chatHub;
         }
         #endregion
 
@@ -64,6 +69,8 @@ namespace BienenstockCorpAPI.Services
                 _context.Message.Add(message);
                 await _context.SaveChangesAsync();
 
+                ChatUpdate(HubCode.CHAT);
+
                 return new SaveMessageResponse
                 {
                     Success = true,
@@ -99,6 +106,20 @@ namespace BienenstockCorpAPI.Services
             }
 
             return error;
+        }
+        #endregion
+
+        #region Privates
+        private void ChatUpdate(string hubCode)
+        {
+            if (string.IsNullOrEmpty(hubCode))
+                return;
+
+            var group = _chatHub.Clients.Group(hubCode);
+
+            // Trigger client side update
+            if (group != null)
+                group.SendAsync("ChatUpdate");
         }
         #endregion
     }
