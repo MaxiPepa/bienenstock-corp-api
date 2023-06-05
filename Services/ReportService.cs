@@ -46,19 +46,15 @@ namespace BienenstockCorpAPI.Services
 
             var totalProducts = products.Sum(p => p.Quantity);
 
-            var totalPendingProducts = 0;
-            purchases.Where(x => x.Pending).ToList().ForEach(p =>
-            {
-                totalPendingProducts += p.ProductPurchases.Sum(y => y.Quantity);
-            });
+            var pendingTransactions = purchases.Where(x => x.Pending).ToList().Count + sales.Where(x => !x.Dispatched).ToList().Count;
 
             return new GetCompanyStatsResponse
             {
                 TotalProducts = totalProducts,
                 TotalUsers = users.Count,
-                TotalPurchases = purchases.Where(x => !x.Pending && !x.Cancelled).ToList().Count,
-                TotalSales = sales.Where(x => x.Dispatched).ToList().Count,
-                TotalPendingProducts = totalPendingProducts,
+                CompletedPurchases = purchases.Where(x => !x.Pending && !x.Cancelled).ToList().Count,
+                CompletedSales = sales.Where(x => x.Dispatched).ToList().Count,
+                PendingTransactions = pendingTransactions,
                 TotalReports = 0,
                 Success = true,
                 Message = "Successfully retrieved stats",
