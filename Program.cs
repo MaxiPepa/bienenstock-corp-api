@@ -108,7 +108,7 @@ app.UseAuthorization();
 app.UseEndpoints(endpoints =>
 {
     endpoints.MapHub<ChatHub>("/chat");
-    endpoints.MapHub<LogHub>("/log");
+    endpoints.MapHub<PageHub>("/page");
 });
 
 app.MapControllers();

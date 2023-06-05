@@ -2,10 +2,10 @@
 
 namespace BienenstockCorpAPI.Hubs
 {
-    public class LogHub : Hub
+    public class PageHub : Hub
     {
         #region Constructor
-        public LogHub() { }
+        public PageHub() { }
         #endregion
 
         #region Methods

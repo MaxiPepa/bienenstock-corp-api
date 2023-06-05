@@ -5,8 +5,9 @@ using System.Security.Claims;
 using BienenstockCorpAPI.Helpers;
 using BienenstockCorpAPI.Helpers.Consts;
 using BienenstockCorpAPI.Models.SaleModels;
-using BienenstockCorpAPI.Models.PurchaseModels;
 using BienenstockCorpAPI.Models.LogModels;
+using BienenstockCorpAPI.Hubs;
+using Microsoft.AspNetCore.SignalR;
 
 namespace BienenstockCorpAPI.Services
 {
@@ -15,11 +16,13 @@ namespace BienenstockCorpAPI.Services
         #region Constructor
         private readonly BienenstockCorpContext _context;
         private readonly LogService _logService;
+        private readonly IHubContext<PageHub> _pageHub;
 
-        public SaleService(BienenstockCorpContext context, LogService logService)
+        public SaleService(BienenstockCorpContext context, LogService logService, IHubContext<PageHub> pageHub)
         {
             _context = context;
             _logService = logService;
+            _pageHub = pageHub;
         }
         #endregion
 
@@ -151,6 +154,10 @@ namespace BienenstockCorpAPI.Services
                     Description = "Has made a new sale",
                 });
 
+                SaleUpdate(HubCode.SALE);
+                ProductUpdate(HubCode.PRODUCT);
+                DepositUpdate(HubCode.DESPOSIT);
+
                 return new SaveSaleResponse
                 {
                     Success = true,
@@ -213,6 +220,9 @@ namespace BienenstockCorpAPI.Services
                     UserId = token.UserId,
                     Description = "Dispatched your Sale",
                 });
+
+                SaleUpdate(HubCode.SALE);
+                DepositUpdate(HubCode.DESPOSIT);
 
                 return new DispatchSaleResponse
                 {
@@ -286,6 +296,10 @@ namespace BienenstockCorpAPI.Services
                     Description = "Cancelled a Sale",
                 });
 
+                SaleUpdate(HubCode.SALE);
+                DepositUpdate(HubCode.DESPOSIT);
+                ProductUpdate(HubCode.PRODUCT);
+
                 return new CancelSaleResponse
                 {
                     Success = true,
@@ -356,6 +370,44 @@ namespace BienenstockCorpAPI.Services
             }
 
             return error;
+        }
+        #endregion
+
+        #region Privates
+        private void SaleUpdate(string hubCode)
+        {
+            if (string.IsNullOrEmpty(hubCode))
+                return;
+
+            var group = _pageHub.Clients.Group(hubCode);
+
+            // Trigger client side update
+            if (group != null)
+                group.SendAsync("SaleUpdate");
+        }
+
+        private void DepositUpdate(string hubCode)
+        {
+            if (string.IsNullOrEmpty(hubCode))
+                return;
+
+            var group = _pageHub.Clients.Group(hubCode);
+
+            // Trigger client side update
+            if (group != null)
+                group.SendAsync("DepositUpdate");
+        }
+
+        private void ProductUpdate(string hubCode)
+        {
+            if (string.IsNullOrEmpty(hubCode))
+                return;
+
+            var group = _pageHub.Clients.Group(hubCode);
+
+            // Trigger client side update
+            if (group != null)
+                group.SendAsync("ProductUpdate");
         }
         #endregion
     }

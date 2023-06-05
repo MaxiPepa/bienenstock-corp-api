@@ -14,12 +14,12 @@ namespace BienenstockCorpAPI.Services
     {
         #region Constructor
         private readonly BienenstockCorpContext _context;
-        private readonly IHubContext<LogHub> _logHub;
+        private readonly IHubContext<PageHub> _pageHub;
 
-        public LogService(BienenstockCorpContext context, IHubContext<LogHub> logHub)
+        public LogService(BienenstockCorpContext context, IHubContext<PageHub> pageHub)
         {
             _context = context;
-            _logHub = logHub;
+            _pageHub = pageHub;
         }
         #endregion
 
@@ -93,7 +93,7 @@ namespace BienenstockCorpAPI.Services
             if (string.IsNullOrEmpty(hubCode))
                 return;
 
-            var group = _logHub.Clients.Group(hubCode);
+            var group = _pageHub.Clients.Group(hubCode);
 
             // Trigger client side update
             if (group != null)

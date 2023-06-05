@@ -7,6 +7,8 @@ using Microsoft.EntityFrameworkCore;
 using System.Text.RegularExpressions;
 using System.Security.Claims;
 using BienenstockCorpAPI.Models.LogModels;
+using BienenstockCorpAPI.Hubs;
+using Microsoft.AspNetCore.SignalR;
 
 namespace BienenstockCorpAPI.Services
 {
@@ -15,14 +17,15 @@ namespace BienenstockCorpAPI.Services
         #region Constructor
         private readonly BienenstockCorpContext _context;
         private readonly LogService _logService;
+        private readonly IHubContext<PageHub> _pageHub;
 
-        public UserService(BienenstockCorpContext context, LogService logService)
+        public UserService(BienenstockCorpContext context, LogService logService, IHubContext<PageHub> pageHub)
         {
             _context = context;
             _logService = logService;
+            _pageHub = pageHub;
         }
         #endregion
-
 
         #region User
         public async Task<GetUsersResponse> GetUsers(GetUsersRequest rq)
@@ -249,6 +252,8 @@ namespace BienenstockCorpAPI.Services
                     Description = $"Created a new user '{user.Name} {user.LastName}'",
                 });
 
+                UserUpdate(HubCode.ADMIN);
+
                 return new SaveUserResponse
                 {
                     FullName = user.FullName,
@@ -307,6 +312,8 @@ namespace BienenstockCorpAPI.Services
                     UserId = token.UserId,
                     Description = $"Modified the user '{user.Name} {user.LastName}'",
                 });
+
+                UserUpdate(HubCode.ADMIN);
 
                 return new ModifyUserResponse
                 {
@@ -373,6 +380,8 @@ namespace BienenstockCorpAPI.Services
                     Description = $"Deleted/inactivated the user '{user.Name} {user.LastName}'",
                 });
 
+                UserUpdate(HubCode.ADMIN);
+
                 return new DeleteUserResponse
                 {
                     Success = true,
@@ -437,6 +446,8 @@ namespace BienenstockCorpAPI.Services
                     UserId = token.UserId,
                     Description = $"Activated the user '{user.Name} {user.LastName}'",
                 });
+
+                UserUpdate(HubCode.ADMIN);
 
                 return new ActivateUserResponse
                 {
@@ -593,6 +604,20 @@ namespace BienenstockCorpAPI.Services
             }
 
             return error;
+        }
+        #endregion
+
+        #region Privates
+        private void UserUpdate(string hubCode)
+        {
+            if (string.IsNullOrEmpty(hubCode))
+                return;
+
+            var group = _pageHub.Clients.Group(hubCode);
+
+            // Trigger client side update
+            if (group != null)
+                group.SendAsync("UserUpdate");
         }
         #endregion
     }
