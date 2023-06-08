@@ -346,6 +346,11 @@ namespace BienenstockCorpAPI.Services
             }
 
             var user = await _context.User
+                .Include(x => x.Bills)
+                .Include(x => x.Logs)
+                .Include(x => x.Messages)
+                .Include(x => x.Purchases)
+                .Include(x => x.Sales)
                 .Where(x => x.UserId == rq.UserId)
                 .FirstOrDefaultAsync();
 
