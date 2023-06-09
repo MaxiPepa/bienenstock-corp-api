@@ -124,6 +124,7 @@ namespace BienenstockCorpAPI.Services
             {
                 Success = true,
                 Message = "Succesfully retrieved user",
+                UserId  = user.UserId,
                 Avatar = user.Avatar,
                 Email = user.Email,
                 FullName = user.FullName,

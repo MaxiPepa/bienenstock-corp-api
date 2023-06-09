@@ -30,7 +30,7 @@ namespace BienenstockCorpAPI.Controllers
                 return Unauthorized(rsp);
         }
 
-        [HttpPost]
+        [HttpGet]
         public async Task<IActionResult> GetLoggedUser()
         {
             var rsp = await _authenticationService.GetLoggedUser(new GetLoggedUserRequest { Identity = HttpContext.User.Identity as ClaimsIdentity });
