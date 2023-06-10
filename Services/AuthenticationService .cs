@@ -86,6 +86,7 @@ namespace BienenstockCorpAPI.Services
                 Success = true,
                 Message = "Successfully signed in",
                 Token = new JwtSecurityTokenHandler().WriteToken(token),
+                UserId = user.UserId,
                 Avatar = user.Avatar,
                 Email = user.Email,
                 FullName = user.FullName,
