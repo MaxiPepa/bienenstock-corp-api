@@ -24,10 +24,34 @@ namespace BienenstockCorpAPI.Controllers
         {
             var rsp = await _authenticationService.Login(rq);
 
+            var loginResponse = new LoginResponse
+            {
+                UserId = rsp.UserId,
+                Avatar = rsp.Avatar,
+                Email = rsp.Email,
+                FullName = rsp.FullName,
+                UserType = rsp.UserType,
+                Success = rsp.Success,
+                Message = rsp.Message,
+            };
+
             if (rsp.Success)
-                return Ok(rsp);
+            {
+                // Set HttpOnly Cookie
+                HttpContext.Response.Cookies.Append("bienenstockCorp_token", rsp.Token,
+                    new CookieOptions
+                    {
+                        Expires = rsp.Expiration,
+                        HttpOnly = true,
+                        Secure = true,
+                        IsEssential = true,
+                        SameSite = SameSiteMode.None,
+                    });
+
+                return Ok(loginResponse);
+            }
             else
-                return Unauthorized(rsp);
+                return Unauthorized(loginResponse);
         }
 
         [HttpGet]
