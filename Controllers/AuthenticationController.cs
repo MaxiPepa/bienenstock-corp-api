@@ -1,4 +1,5 @@
-﻿using BienenstockCorpAPI.Models.AutenticationModels;
+﻿using BienenstockCorpAPI.Helpers.Consts;
+using BienenstockCorpAPI.Models.AutenticationModels;
 using BienenstockCorpAPI.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -38,7 +39,7 @@ namespace BienenstockCorpAPI.Controllers
             if (rsp.Success)
             {
                 // Set HttpOnly Cookie
-                HttpContext.Response.Cookies.Append("bienenstockCorp_token", rsp.Token,
+                HttpContext.Response.Cookies.Append(CookieName.NAME, rsp.Token,
                     new CookieOptions
                     {
                         Expires = rsp.Expiration,
@@ -52,6 +53,14 @@ namespace BienenstockCorpAPI.Controllers
             }
             else
                 return Unauthorized(loginResponse);
+        }
+
+        [HttpGet]
+        public IActionResult Logout()
+        {
+            HttpContext.Response.Cookies.Delete(CookieName.NAME);
+
+            return Ok();
         }
 
         [HttpGet]

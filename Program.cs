@@ -1,4 +1,5 @@
 using BienenstockCorpAPI.Data;
+using BienenstockCorpAPI.Helpers.Consts;
 using BienenstockCorpAPI.Hubs;
 using BienenstockCorpAPI.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -44,7 +45,7 @@ builder.Services.AddCors(options =>
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddCookie(x =>
     {
-        x.Cookie.Name = "bienenstockCorp_token";
+        x.Cookie.Name = CookieName.NAME;
     })
     .AddJwtBearer(options =>
     {
@@ -63,7 +64,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         {
             OnMessageReceived = context =>
             {
-                context.Token = context.Request.Cookies["bienenstockCorp_token"];
+                context.Token = context.Request.Cookies[CookieName.NAME];
                 return Task.CompletedTask;
             }
         };
