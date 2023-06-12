@@ -51,7 +51,7 @@ namespace BienenstockCorpAPI.Services
 
             // Filters
             if (rq.PendingDispatch == true)
-                query = query.Where(x => !x.Dispatched);
+                query = query.Where(x => !x.Dispatched && !x.Cancelled);
 
             if (rq.Cancelled == true)
                 query = query.Where(x => x.Cancelled);
