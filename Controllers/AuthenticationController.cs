@@ -32,6 +32,7 @@ namespace BienenstockCorpAPI.Controllers
                 Email = rsp.Email,
                 FullName = rsp.FullName,
                 UserType = rsp.UserType,
+                Expiration = rsp.Expiration,
                 Success = rsp.Success,
                 Message = rsp.Message,
             };
@@ -58,7 +59,15 @@ namespace BienenstockCorpAPI.Controllers
         [HttpGet]
         public IActionResult Logout()
         {
-            HttpContext.Response.Cookies.Delete(CookieName.NAME);
+            HttpContext.Response.Cookies.Delete(CookieName.NAME, 
+                new CookieOptions
+                {
+                    Expires = DateTime.Now.AddDays(-1),
+                    HttpOnly = true,
+                    Secure = true,
+                    IsEssential = true,
+                    SameSite = SameSiteMode.None,
+                });
 
             return Ok();
         }
