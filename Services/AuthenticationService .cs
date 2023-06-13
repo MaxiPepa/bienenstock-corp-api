@@ -23,10 +23,10 @@ namespace BienenstockCorpAPI.Services
         #endregion
 
         #region Autentication
-        public async Task<LoginResponse> Login(LoginRequest rq)
+        public async Task<TokenResponse> Login(LoginRequest rq)
         {
             if (rq == null)
-                return new LoginResponse
+                return new TokenResponse
                 {
                     Success = false,
                     Message = "Invalid request",
@@ -38,7 +38,7 @@ namespace BienenstockCorpAPI.Services
 
             if (user == null)
             {
-                return new LoginResponse 
+                return new TokenResponse
                 {
                     Success = false,
                     Message = "Incorrect email or password",
@@ -47,7 +47,7 @@ namespace BienenstockCorpAPI.Services
 
             if (user.Inactive)
             {
-                return new LoginResponse
+                return new TokenResponse
                 {
                     Success = false,
                     Message = "This User has been deleted or inactivated",
@@ -81,7 +81,7 @@ namespace BienenstockCorpAPI.Services
                     signingCredentials: singIn
                 );
 
-            return new LoginResponse
+            return new TokenResponse
             {
                 Success = true,
                 Message = "Successfully signed in",

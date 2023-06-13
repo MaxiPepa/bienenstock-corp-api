@@ -1,4 +1,5 @@
-﻿using BienenstockCorpAPI.Models.AutenticationModels;
+﻿using BienenstockCorpAPI.Helpers.Consts;
+using BienenstockCorpAPI.Models.AutenticationModels;
 using BienenstockCorpAPI.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -24,10 +25,51 @@ namespace BienenstockCorpAPI.Controllers
         {
             var rsp = await _authenticationService.Login(rq);
 
+            var loginResponse = new LoginResponse
+            {
+                UserId = rsp.UserId,
+                Avatar = rsp.Avatar,
+                Email = rsp.Email,
+                FullName = rsp.FullName,
+                UserType = rsp.UserType,
+                Expiration = rsp.Expiration,
+                Success = rsp.Success,
+                Message = rsp.Message,
+            };
+
             if (rsp.Success)
-                return Ok(rsp);
+            {
+                // Set HttpOnly Cookie
+                HttpContext.Response.Cookies.Append(CookieName.NAME, rsp.Token,
+                    new CookieOptions
+                    {
+                        Expires = rsp.Expiration,
+                        HttpOnly = true,
+                        Secure = true,
+                        IsEssential = true,
+                        SameSite = SameSiteMode.None,
+                    });
+
+                return Ok(loginResponse);
+            }
             else
-                return Unauthorized(rsp);
+                return Unauthorized(loginResponse);
+        }
+
+        [HttpGet]
+        public IActionResult Logout()
+        {
+            HttpContext.Response.Cookies.Delete(CookieName.NAME, 
+                new CookieOptions
+                {
+                    Expires = DateTime.Now.AddDays(-1),
+                    HttpOnly = true,
+                    Secure = true,
+                    IsEssential = true,
+                    SameSite = SameSiteMode.None,
+                });
+
+            return Ok();
         }
 
         [HttpGet]
