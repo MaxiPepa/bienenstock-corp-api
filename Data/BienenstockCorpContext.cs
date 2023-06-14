@@ -44,33 +44,33 @@ public partial class BienenstockCorpContext : DbContext
 
             entity.ToTable("Bill");
 
-            entity.Property(e => e.Address)
-                .HasMaxLength(50)
-                .IsUnicode(false)
-                .UseCollation("Modern_Spanish_CI_AS");
             entity.Property(e => e.BillType)
                 .HasMaxLength(10)
                 .IsUnicode(false)
                 .UseCollation("Modern_Spanish_CI_AS");
-            entity.Property(e => e.Description).IsUnicode(false);
-            entity.Property(e => e.IssueDate).HasColumnType("datetime");
-            entity.Property(e => e.Reason)
+            entity.Property(e => e.BusinessName)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.CompanyAddress)
                 .HasMaxLength(50)
                 .IsUnicode(false)
                 .UseCollation("Modern_Spanish_CI_AS");
-            entity.Property(e => e.Title)
+            entity.Property(e => e.CompanyIdentifier)
+                .HasMaxLength(20)
+                .IsUnicode(false);
+            entity.Property(e => e.CompanyStart).HasColumnType("date");
+            entity.Property(e => e.ConsumerAddress)
                 .HasMaxLength(50)
+                .IsUnicode(false)
+                .UseCollation("Modern_Spanish_CI_AS");
+            entity.Property(e => e.ConsumerIdentifier)
+                .HasMaxLength(20)
                 .IsUnicode(false);
 
             entity.HasOne(d => d.Sale).WithMany(p => p.Bills)
                 .HasForeignKey(d => d.SaleId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("Bill_Sale_FK");
-
-            entity.HasOne(d => d.User).WithMany(p => p.Bills)
-                .HasForeignKey(d => d.UserId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("Bill_User_FK");
         });
 
         modelBuilder.Entity<Log>(entity =>

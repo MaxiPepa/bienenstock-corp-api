@@ -22,8 +22,6 @@ public partial class User
 
     public bool Inactive { get; set; }
 
-    public virtual ICollection<Bill> Bills { get; set; } = new List<Bill>();
-
     public virtual ICollection<Log> Logs { get; set; } = new List<Log>();
 
     public virtual ICollection<Message> Messages { get; set; } = new List<Message>();

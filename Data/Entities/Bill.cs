@@ -7,23 +7,21 @@ public partial class Bill
 {
     public int BillId { get; set; }
 
-    public string Description { get; set; } = null!;
-
-    public DateTime IssueDate { get; set; }
-
-    public string Title { get; set; } = null!;
-
-    public int UserId { get; set; }
+    public string BusinessName { get; set; } = null!;
 
     public string BillType { get; set; } = null!;
 
-    public string Reason { get; set; } = null!;
+    public string ConsumerAddress { get; set; } = null!;
 
-    public string Address { get; set; } = null!;
+    public string CompanyAddress { get; set; } = null!;
 
     public int SaleId { get; set; }
 
-    public virtual Sale Sale { get; set; } = null!;
+    public string ConsumerIdentifier { get; set; } = null!;
 
-    public virtual User User { get; set; } = null!;
+    public string CompanyIdentifier { get; set; } = null!;
+
+    public DateTime CompanyStart { get; set; }
+
+    public virtual Sale Sale { get; set; } = null!;
 }
