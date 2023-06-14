@@ -69,7 +69,11 @@ namespace BienenstockCorpAPI.Controllers
                     SameSite = SameSiteMode.None,
                 });
 
-            return Ok();
+            return Ok(new LogoutResponse
+            {
+                Success = true,
+                Message = "Successfully logged out",
+            });
         }
 
         [HttpGet]
