@@ -47,6 +47,7 @@ namespace BienenstockCorpAPI.Services
                 .Include(x => x.ProductSales)
                 .ThenInclude(x => x.Product)
                 .Include(x => x.User)
+                .Include(x => x.Bill)
                 .AsQueryable();
 
             // Filters
@@ -80,6 +81,18 @@ namespace BienenstockCorpAPI.Services
                         Quantity = p.Quantity,
                         UnitPrice = p.UnitPrice,
                     }).ToList(),
+                    Bill = new GetSalesResponse.BillItem
+                    {
+                        BillId = x.BillId,
+                        BusinessName = x.Bill.BusinessName,
+                        BillType = x.Bill.BillType,
+                        PaymentType = x.Bill.PaymentType,
+                        ConsumerAddress = x.Bill.ConsumerAddress,
+                        CompanyAddress = x.Bill.CompanyAddress,
+                        ConsumerIdentifier = x.Bill.ConsumerIdentifier,
+                        CompanyIdentifier = x.Bill.CompanyIdentifier,
+                        CompanyStart = x.Bill.CompanyStart,
+                    }
                 }).OrderByDescending(x => x.Date).ToList(),
                 Message = "Sales retrieved",
                 Success = true,
@@ -135,6 +148,7 @@ namespace BienenstockCorpAPI.Services
                 Date = rq.SaleDate,
                 TotalPrice = salePrice,
                 UserId = token.UserId,
+                Bill = CreateBill(rq.BillingInformation)
             };
 
             sale.ProductSales.AddRange(rq.Products.Select(x => new ProductSale
@@ -374,6 +388,21 @@ namespace BienenstockCorpAPI.Services
         #endregion
 
         #region Privates
+        private Bill CreateBill(SaveSaleRequest.BillItem billData)
+        {
+            return new Bill
+            {
+                BusinessName = billData.BusinessName,
+                BillType = billData.BillType,
+                PaymentType = billData.PaymentType,
+                ConsumerAddress = billData.ConsumerAddress,
+                ConsumerIdentifier = billData.ConsumerIdentifier,
+                CompanyIdentifier = "30-31415926-9",
+                CompanyAddress = "Zeballos 1341, Rosario, Santa Fe, Argentina",
+                CompanyStart = new DateTime(2023, 4, 27),
+            };
+        }
+
         private void SaleUpdate(string hubCode)
         {
             if (string.IsNullOrEmpty(hubCode))

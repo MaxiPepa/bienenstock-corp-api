@@ -19,7 +19,9 @@ public partial class Sale
 
     public bool Cancelled { get; set; }
 
-    public virtual ICollection<Bill> Bills { get; set; } = new List<Bill>();
+    public int BillId { get; set; }
+
+    public virtual Bill Bill { get; set; } = null!;
 
     public virtual ICollection<ProductSale> ProductSales { get; set; } = new List<ProductSale>();
 
