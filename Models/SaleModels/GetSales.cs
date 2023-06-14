@@ -23,6 +23,7 @@
             public bool Cancelled { get; set; }
             public string UserFullName { get; set; } = null!;
             public List<ProductItem> Products{ get; set; } = null!;
+            public BillItem Bill { get; set; } = null!;
         }
 
         public class ProductItem
@@ -32,6 +33,19 @@
             public string ProductCode { get; set; } = null!;
             public int Quantity { get; set; }
             public decimal UnitPrice { get; set;}
+        }
+
+        public class BillItem
+        {
+            public int BillId { get; set; }
+            public string BusinessName { get; set; } = null!;
+            public string BillType { get; set; } = null!;
+            public string PaymentType { get; set; } = null!;
+            public string ConsumerAddress { get; set; } = null!;
+            public string CompanyAddress { get; set; } = null!;
+            public string ConsumerIdentifier { get; set; } = null!;
+            public string CompanyIdentifier { get; set; } = null!;
+            public DateTime CompanyStart { get; set; }
         }
     }
 }

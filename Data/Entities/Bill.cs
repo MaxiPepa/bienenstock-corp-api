@@ -15,13 +15,13 @@ public partial class Bill
 
     public string CompanyAddress { get; set; } = null!;
 
-    public int SaleId { get; set; }
-
     public string ConsumerIdentifier { get; set; } = null!;
 
     public string CompanyIdentifier { get; set; } = null!;
 
     public DateTime CompanyStart { get; set; }
 
-    public virtual Sale Sale { get; set; } = null!;
+    public string PaymentType { get; set; } = null!;
+
+    public virtual ICollection<Sale> Sales { get; set; } = new List<Sale>();
 }
