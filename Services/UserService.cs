@@ -346,7 +346,6 @@ namespace BienenstockCorpAPI.Services
             }
 
             var user = await _context.User
-                .Include(x => x.Bills)
                 .Include(x => x.Logs)
                 .Include(x => x.Messages)
                 .Include(x => x.Purchases)
@@ -363,8 +362,7 @@ namespace BienenstockCorpAPI.Services
                 };
             }
 
-            if (user.Bills.Count > 0 ||
-                user.Logs.Count > 0 ||
+            if (user.Logs.Count > 0 ||
                 user.Messages.Count > 0 ||
                 user.Purchases.Count > 0 ||
                 user.Sales.Count > 0)
