@@ -44,9 +44,9 @@ namespace BienenstockCorpAPI.Services
             var sales = await _context.Sale
                 .ToListAsync();
 
-            var totalProducts = products.Sum(p => p.Quantity);
+            var totalProducts = products.Where(p => p.Quantity > 0).ToList().Count;
 
-            var pendingTransactions = purchases.Where(x => x.Pending).ToList().Count + sales.Where(x => !x.Dispatched).ToList().Count;
+            var pendingTransactions = purchases.Where(x => x.Pending).ToList().Count + sales.Where(x => !x.Dispatched && !x.Cancelled).ToList().Count;
 
             return new GetCompanyStatsResponse
             {
