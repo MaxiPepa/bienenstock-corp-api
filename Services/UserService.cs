@@ -57,7 +57,6 @@ namespace BienenstockCorpAPI.Services
         public async Task<ChangePasswordResponse> ChangePassword(ChangePasswordRequest rq, ClaimsIdentity? identity)
         {
             var token = identity.TokenVerifier();
-            var passwordRegx = new Regex(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\w\s]).{6,}$");
             var validation = ValidateChangePassword(rq,token);
 
             if (!string.IsNullOrEmpty(validation))
@@ -88,6 +87,15 @@ namespace BienenstockCorpAPI.Services
                 {
                     Success = false,
                     Message = "Incorrect password",
+                };
+            }
+
+            if (user.PassHash == EncryptionHelper.EncryptSHA256(rq.NewPassword))
+            {
+                return new ChangePasswordResponse
+                {
+                    Success = false,
+                    Message = "The new password can't be the same as the old password",
                 };
             }
 
@@ -183,9 +191,22 @@ namespace BienenstockCorpAPI.Services
                 };
             }
 
-            var user = await _context.User
-                .Where(x => x.UserId == token.UserId)
-                .FirstOrDefaultAsync();
+            var users = await _context.User
+                .ToListAsync();
+
+            var userEmails = users.Select(x => x.Email);
+
+            var user = users
+                .FirstOrDefault(x => x.UserId == token.UserId);
+
+            if (userEmails.Contains(rq.Email))
+            {
+                return new ChangeEmailResponse
+                {
+                    Success = false,
+                    Message = "The email is already in use by other user",
+                };
+            }
 
             if (user == null)
             {
@@ -470,11 +491,13 @@ namespace BienenstockCorpAPI.Services
         #endregion
 
         #region Validations
-        private static string ValidateSaveUser(SaveUserRequest rq, TokenVerifyResponse token)
+        private string ValidateSaveUser(SaveUserRequest rq, TokenVerifyResponse token)
         {
             var error = String.Empty;
             var emailRegx = new Regex(@"\S+@\S+\.\S+");
             var passwordRegx = new Regex(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\w\s]).{6,}$");
+
+            var userEmails = _context.User.Select(x => x.Email).ToList();
 
             if (rq == null)
             {
@@ -491,6 +514,10 @@ namespace BienenstockCorpAPI.Services
             else if (string.IsNullOrEmpty(rq.Email) || !emailRegx.IsMatch(rq.Email))
             {
                 error = "Provide a valid Email";
+            }
+            else if (userEmails.Contains(rq.Email))
+            {
+                error = "The email is already in use by other user";
             }
             else if (string.IsNullOrEmpty(rq.Password) || !passwordRegx.IsMatch(rq.Password))
             {
@@ -534,10 +561,12 @@ namespace BienenstockCorpAPI.Services
             return error;
         }
 
-        private static string ValidateModifyUser(ModifyUserRequest rq,TokenVerifyResponse token)
+        private string ValidateModifyUser(ModifyUserRequest rq,TokenVerifyResponse token)
         {
             var error = String.Empty;
             var emailRegx = new Regex(@"\S+@\S+\.\S+");
+
+            var userEmails = _context.User.Select(x => x.Email).ToList();
 
             if (rq == null)
             {
@@ -554,6 +583,10 @@ namespace BienenstockCorpAPI.Services
             else if (string.IsNullOrEmpty(rq.Email) || !emailRegx.IsMatch(rq.Email))
             {
                 error = "Provide a valid Email";
+            }
+            else if (userEmails.Contains(rq.Email))
+            {
+                error = "The email is already in use by other user";
             }
             else if (string.IsNullOrEmpty(rq.UserType) ||
                 rq.UserType != UserType.ADMIN &&

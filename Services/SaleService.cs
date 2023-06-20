@@ -34,7 +34,8 @@ namespace BienenstockCorpAPI.Services
             if (!token.Success ||
                 (token.UserType != UserType.SELLER &&
                 token.UserType != UserType.DEPOSITOR &&
-                token.UserType != UserType.ADMIN))
+                token.UserType != UserType.ADMIN &&
+                token.UserType != UserType.ANALYST))
             {
                 return new GetSalesResponse
                 {
@@ -219,6 +220,14 @@ namespace BienenstockCorpAPI.Services
                 return new DispatchSaleResponse
                 {
                     Message = "The requested sale is cancelled",
+                    Success = false,
+                };
+            }
+            else if (sale.Date > rq.DispatchDate)
+            {
+                return new DispatchSaleResponse
+                {
+                    Message = "The dispatch date can't be before the sale date",
                     Success = false,
                 };
             }

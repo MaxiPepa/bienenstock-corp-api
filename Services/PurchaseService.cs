@@ -35,7 +35,8 @@ namespace BienenstockCorpAPI.Services
             if (!token.Success ||
                 (token.UserType != UserType.BUYER &&
                 token.UserType != UserType.DEPOSITOR &&
-                token.UserType != UserType.ADMIN))
+                token.UserType != UserType.ADMIN &&
+                token.UserType != UserType.ANALYST))
             {
                 return new GetPurchasesResponse
                 {
@@ -206,6 +207,14 @@ namespace BienenstockCorpAPI.Services
                 return new CompletePurchaseResponse
                 {
                     Message = "The requested purchase is cancelled",
+                    Success = false,
+                };
+            }
+            else if (purchase.Date > rq.EnterDate)
+            {
+                return new CompletePurchaseResponse
+                {
+                    Message = "The enter date can't be before the purchase date",
                     Success = false,
                 };
             }
