@@ -210,6 +210,14 @@ namespace BienenstockCorpAPI.Services
                     Success = false,
                 };
             }
+            else if (purchase.Date > rq.EnterDate)
+            {
+                return new CompletePurchaseResponse
+                {
+                    Message = "The enter date can't be before the purchase date",
+                    Success = false,
+                };
+            }
 
             var productPurchasesIds = purchase.ProductPurchases.Select(x => x.ProductId).ToList();
 

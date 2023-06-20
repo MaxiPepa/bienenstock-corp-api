@@ -223,6 +223,14 @@ namespace BienenstockCorpAPI.Services
                     Success = false,
                 };
             }
+            else if (sale.Date > rq.DispatchDate)
+            {
+                return new DispatchSaleResponse
+                {
+                    Message = "The dispatch date can't be before the sale date",
+                    Success = false,
+                };
+            }
 
             sale.Dispatched = true;
             sale.DispatchDate = rq.DispatchDate;
