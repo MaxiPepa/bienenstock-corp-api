@@ -35,7 +35,8 @@ namespace BienenstockCorpAPI.Services
             if (!token.Success ||
                 (token.UserType != UserType.BUYER &&
                 token.UserType != UserType.DEPOSITOR &&
-                token.UserType != UserType.ADMIN))
+                token.UserType != UserType.ADMIN &&
+                token.UserType != UserType.ANALYST))
             {
                 return new GetPurchasesResponse
                 {
