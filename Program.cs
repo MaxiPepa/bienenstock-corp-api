@@ -35,7 +35,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy(name: MyAllowSpecificOrigins,
                       builder =>
                       {
-                          builder.WithOrigins("http://localhost:3000", "http://bienenstockcorp.somee.com")
+                          builder.WithOrigins("http://localhost:3000", "http://bienenstockcorp.somee.com", "https://bienenstock-corp-web-lucasbutto.vercel.app")
                           .SetIsOriginAllowedToAllowWildcardSubdomains()
                           .AllowAnyHeader()
                           .AllowAnyMethod()
