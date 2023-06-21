@@ -191,15 +191,10 @@ namespace BienenstockCorpAPI.Services
                 };
             }
 
-            var users = await _context.User
-                .ToListAsync();
+            var userEmail = await _context.User
+                .FirstOrDefaultAsync(x => x.Email == rq.Email && x.UserId != token.UserId);
 
-            var userEmails = users.Select(x => x.Email);
-
-            var user = users
-                .FirstOrDefault(x => x.UserId == token.UserId);
-
-            if (userEmails.Contains(rq.Email))
+            if (userEmail != null)
             {
                 return new ChangeEmailResponse
                 {
@@ -207,6 +202,9 @@ namespace BienenstockCorpAPI.Services
                     Message = "The email is already in use by other user",
                 };
             }
+
+            var user = await _context.User
+                .FirstOrDefaultAsync(x => x.UserId == token.UserId);
 
             if (user == null)
             {
@@ -566,7 +564,7 @@ namespace BienenstockCorpAPI.Services
             var error = String.Empty;
             var emailRegx = new Regex(@"\S+@\S+\.\S+");
 
-            var userEmails = _context.User.Select(x => x.Email).ToList();
+            var user = _context.User.FirstOrDefault(x => x.Email == rq.Email && x.UserId != rq.Id);
 
             if (rq == null)
             {
@@ -584,7 +582,7 @@ namespace BienenstockCorpAPI.Services
             {
                 error = "Provide a valid Email";
             }
-            else if (userEmails.Contains(rq.Email))
+            else if (user != null)
             {
                 error = "The email is already in use by other user";
             }
