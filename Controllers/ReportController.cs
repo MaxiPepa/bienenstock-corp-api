@@ -25,6 +25,17 @@ namespace BienenstockCorpAPI.Controllers
         {
             return Ok(await _reportService.GetCompanyStats(HttpContext.User.Identity as ClaimsIdentity));
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GetStatistics()
+        {
+            var rsp = await _reportService.GetStatistics(HttpContext.User.Identity as ClaimsIdentity);
+
+            if (rsp.Success)
+                return Ok(rsp);
+            else
+                return BadRequest(rsp);
+        }
         #endregion
     }
 }
